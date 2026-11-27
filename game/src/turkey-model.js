@@ -20,10 +20,10 @@ function featherMaterial(color, offsetFactor) {
 function featherShape(halfW, height) {
   const s = new THREE.Shape();
   s.moveTo(0, 0);
-  s.quadraticCurveTo(halfW * 1.08, height * 0.2, halfW * 0.58, height * 0.55);
-  s.quadraticCurveTo(halfW * 0.26, height * 0.88, 0, height);
-  s.quadraticCurveTo(-halfW * 0.26, height * 0.88, -halfW * 0.58, height * 0.55);
-  s.quadraticCurveTo(-halfW * 1.08, height * 0.2, 0, 0);
+  s.bezierCurveTo(halfW * 0.4, height * 0.04, halfW * 1.05, height * 0.22, halfW * 0.92, height * 0.58);
+  s.bezierCurveTo(halfW * 0.78, height * 0.9, halfW * 0.3, height * 1.02, 0, height);
+  s.bezierCurveTo(-halfW * 0.3, height * 1.02, -halfW * 0.78, height * 0.9, -halfW * 0.92, height * 0.58);
+  s.bezierCurveTo(-halfW * 1.05, height * 0.22, -halfW * 0.4, height * 0.04, 0, 0);
   return s;
 }
 
@@ -40,9 +40,9 @@ function featherGeo(halfW, height) {
   return geo;
 }
 
-const TAIL_BASE_GEO = featherGeo(0.2, 0.82);
-const TAIL_MID_GEO = featherGeo(0.155, 0.56);
-const TAIL_TIP_GEO = featherGeo(0.12, 0.36);
+const TAIL_BASE_GEO = featherGeo(0.34, 1.08);
+const TAIL_MID_GEO = featherGeo(0.3, 0.7);
+const TAIL_TIP_GEO = featherGeo(0.26, 0.46);
 const TAIL_BASE_MAT = featherMaterial(0x6a3018, 1);
 const TAIL_MID_MAT = featherMaterial(0xc4622a, -1);
 const TAIL_TIP_MAT = featherMaterial(0xfff3d4, -3);
@@ -68,28 +68,29 @@ export function createTurkey() {
   breast.scale.set(0.95, 0.8, 0.7);
 
   const tail = new THREE.Group();
-  tail.position.set(0, 1.02, -0.78);
+  tail.position.set(0, 0.92, -0.78);
+  tail.scale.set(1.15, 1.2, 1);
   rig.add(tail);
   for (let i = 0; i < 11; i += 1) {
     const feather = new THREE.Group();
     const fromCenter = i - 5;
     const edge = Math.abs(fromCenter) / 5;
-    feather.rotation.z = fromCenter * 0.15;
-    feather.rotation.x = fromCenter * 0.01;
-    feather.rotation.y = (i % 2 === 0 ? 0.028 : -0.028);
+    feather.rotation.z = fromCenter * 0.168;
+    feather.rotation.x = fromCenter * 0.008;
+    feather.rotation.y = (i % 2 === 0 ? 0.02 : -0.02);
     // Chase cam sees tail-local -Z. Centre feather sits closest; edges step back.
-    feather.position.z = -0.06 + edge * 0.22;
-    feather.scale.set(1 - edge * 0.06, 1 - edge * 0.16, 1);
+    feather.position.z = -0.07 + edge * 0.24;
+    feather.scale.set(1 - edge * 0.04, 1 - edge * 0.1, 1);
     const base = new THREE.Mesh(TAIL_BASE_GEO, TAIL_BASE_MAT);
     base.castShadow = true;
     base.receiveShadow = true;
     feather.add(base);
     const mid = new THREE.Mesh(TAIL_MID_GEO, TAIL_MID_MAT);
-    mid.position.set(0, 0.4, -0.03);
+    mid.position.set(0, 0.5, -0.032);
     mid.castShadow = true;
     feather.add(mid);
     const tip = new THREE.Mesh(TAIL_TIP_GEO, TAIL_TIP_MAT);
-    tip.position.set(0, 0.84, -0.058);
+    tip.position.set(0, 0.98, -0.062);
     tip.castShadow = true;
     feather.add(tip);
     tail.add(feather);
