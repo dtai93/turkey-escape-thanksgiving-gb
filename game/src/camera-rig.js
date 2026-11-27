@@ -1,4 +1,6 @@
-// Low chase camera: Tom sits in the lower middle, the lane runs away, Hank stays in frame behind.
+// Chase camera sits well behind and above Tom. World forward is -Z, so the rig
+// stays on +Z and looks down the lane. Tom lands in the lower-middle third;
+// Hank, between the camera and the turkey, stays fully in frame.
 
 import * as THREE from 'three';
 
@@ -9,23 +11,25 @@ export function createCameraRig(camera) {
   return {
     snap: true,
     update(bird, farmer, state, dt) {
-      desired.set(bird.x - 0.25, 2.35, bird.z + 5.85);
-      look.set(bird.x + 0.1, 0.62, bird.z - 2.15);
+      // Check: bird at origin → cam (0.55, 4.35, 10.6), look (-0.2, 1.15, -8.2).
+      // View aims mostly -Z and a little down, so the tail does not fill the lens.
+      desired.set(bird.x + 0.7, 3.55, bird.z + 9.2);
+      look.set(bird.x, 1.05, bird.z - 7.5);
       if (state.shot === 'cover') {
-        desired.set(bird.x + 0.15, 2.55, bird.z + 6.15);
-        look.set(bird.x - 0.1, 0.42, bird.z - 2.4);
+        desired.set(bird.x + 2.55, 3.15, bird.z + 8.15);
+        look.set(bird.x - 0.15, 0.95, bird.z - 6.6);
       } else if (state.shot === 'kitchen') {
-        desired.set(bird.x + 0.35, 2.45, bird.z + 5.7);
-        look.set(bird.x - 0.15, 0.72, bird.z - 2.5);
+        desired.set(bird.x + 0.2, 2.25, bird.z + 5.35);
+        look.set(bird.x - 0.35, 0.82, bird.z - 4.8);
       } else if (state.mode === 'title') {
-        desired.set(-0.7, 1.9, -1.6);
-        look.set(0.15, 0.7, -8.2);
+        desired.set(-1.6, 2.55, 1.4);
+        look.set(0.1, 0.85, -9.4);
       } else if (state.caughtPose) {
-        desired.set(bird.x - 2.5, 1.72, bird.z + 3.5);
-        look.set(bird.x + 2.1, 0.95, bird.z - 0.6);
+        desired.set(bird.x - 3.6, 2.35, bird.z + 5.4);
+        look.set(bird.x + 1.4, 1.05, bird.z - 1.2);
       } else if (state.escapedPose) {
-        desired.set(bird.x - 2.4, 1.9, bird.z + 4.4);
-        look.set(bird.x, 1.0, bird.z - 6);
+        desired.set(bird.x - 3.2, 2.6, bird.z + 6.2);
+        look.set(bird.x, 1.15, bird.z - 8);
       }
       if (this.snap) {
         camera.position.copy(desired);

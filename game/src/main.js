@@ -36,7 +36,7 @@ renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 180);
+const camera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 220);
 const lighting = createLighting(scene);
 const particles = createParticles(scene);
 const turkey = createTurkey();
@@ -339,10 +339,10 @@ if (query.name) {
     state.shoutT = 2;
     farmer.state = 'LUNGE';
     state.farmerState = 'LUNGE';
-    state.farmerDist = 2.45;
-    farmer.z = bird.z + 2.45;
-    farmer.x = bird.x - 1.2;
-    bird.y = 0.72;
+    state.farmerDist = 2.15;
+    farmer.z = bird.z + 1.65;
+    farmer.x = bird.x - 2.05;
+    bird.y = 0.85;
     bird.grounded = false;
     bird.pose = 'jump';
   }
@@ -358,8 +358,8 @@ if (query.name) {
     farmer.state = 'CHASE';
     state.farmerState = 'CHASE';
     state.farmerDist = 2.4;
-    farmer.z = bird.z + 2.45;
-    farmer.x = bird.x + 1.95;
+    farmer.z = bird.z + 2.15;
+    farmer.x = bird.x + 1.35;
     state.hat = 'none';
     turkey.userData.setHat('none');
     bird.sliding = 0;

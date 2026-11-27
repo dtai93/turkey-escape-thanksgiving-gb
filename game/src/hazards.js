@@ -59,10 +59,10 @@ export function makeKnife() {
   const g = new THREE.Group();
   const blade = new THREE.Group();
   g.add(blade);
-  const steel = mesh(new THREE.BoxGeometry(2.05, 0.42, 0.08), 0xf4f7fb, 0.42, 0.95, 0, blade);
+  const steel = mesh(new THREE.BoxGeometry(2.15, 0.62, 0.1), 0xf4f7fb, 0.42, 0.95, 0, blade);
   steel.material = new THREE.MeshBasicMaterial({ color: 0xf4f7fb });
-  mesh(new THREE.BoxGeometry(1.9, 0.06, 0.09), 0x8b949e, 0.36, 1.12, 0, blade);
-  const edge = mesh(new THREE.BoxGeometry(1.95, 0.045, 0.09), 0xff241c, 0.4, 0.78, 0.02, blade);
+  mesh(new THREE.BoxGeometry(1.95, 0.07, 0.11), 0x8b949e, 0.36, 1.2, 0, blade);
+  const edge = mesh(new THREE.BoxGeometry(2.05, 0.09, 0.12), 0xff241c, 0.4, 0.7, 0.02, blade);
   edge.material = new THREE.MeshBasicMaterial({ color: 0xff241c });
   const tip = mesh(new THREE.ConeGeometry(0.28, 0.78, 4), 0xf7fbff, 1.78, 0.95, 0, blade);
   tip.rotation.z = -Math.PI / 2;
@@ -135,17 +135,17 @@ export function primeShotHazards(root, time, bird) {
       if (!found.knife && kind === 'knife') found.knife = obj;
     });
   }
-  drop(found.oven, -2.35, 2.15);
-  drop(found.knife, 0.28, -1.15);
+  drop(found.oven, -2.55, 0.55);
+  drop(found.knife, 0.15, -2.05);
   if (found.oven) {
-    found.oven.scale.setScalar(1.45);
-    found.oven.rotation.y = 0.55;
+    found.oven.scale.setScalar(1.55);
+    found.oven.rotation.y = -0.65;
   }
   if (found.knife) {
-    found.knife.scale.setScalar(1.2);
-    found.knife.rotation.set(0.12, 0.62, -0.18);
-    found.knife.position.y = -0.22;
+    found.knife.scale.setScalar(1.45);
+    found.knife.rotation.set(-0.55, 0.35, -0.15);
+    found.knife.position.y = 0;
   }
   if (found.oven) found.oven.userData.phase = phaseFor(time, 3.2, 2.55);
-  if (found.knife) found.knife.userData.phase = phaseFor(time, 2.6, 2.12);
+  if (found.knife) found.knife.userData.phase = phaseFor(time, 2.6, 2.08);
 }
