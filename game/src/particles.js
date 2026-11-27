@@ -68,6 +68,8 @@ export function createParticles(scene) {
   const leaves = makePool(scene, 36, PALETTE.leaf, 0.16, true);
   const leaves2 = makePool(scene, 24, 0xe0a030, 0.14, true);
   const fire = makePool(scene, 16, 0xff6a20, 0.12, false);
+  const corn = makePool(scene, 28, 0xf0c030, 0.07, false);
+  const dust = makePool(scene, 32, 0xc4a06a, 0.1, true);
   return {
     feathers,
     leaves,
@@ -86,11 +88,23 @@ export function createParticles(scene) {
     puffFire(x, y, z) {
       fire.burst(x, y, z, 6, 2);
     },
+    puffCorn(x, y, z) {
+      corn.burst(x, y, z, 14, 4.2);
+    },
+    puffDust(x, y, z) {
+      dust.burst(x, y, z, 16, 3.2);
+    },
+    puffLeaves(x, y, z) {
+      leaves.burst(x, y, z, 8, 2.4);
+      leaves2.burst(x - 0.6, y - 0.4, z + 0.4, 6, 2);
+    },
     tick(dt) {
       feathers.tick(dt, 0);
       leaves.tick(dt, -1.5);
       leaves2.tick(dt, -1.2);
       fire.tick(dt, 0.4);
+      corn.tick(dt, -0.4);
+      dust.tick(dt, 0.2);
     },
   };
 }

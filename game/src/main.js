@@ -333,16 +333,26 @@ if (query.name) {
   if (query.name === 'end' && state.mode !== MODE_END) finish('caught');
   if (query.name === 'escaped' && state.mode !== MODE_END) finish('escaped');
   if (query.name === 'cover') {
-    state.banner = 'NEAR MISS!';
+    state.banner = 'CLOSE CALL!';
+    state.bonus = '+250';
     state.bannerT = 2;
+    state.multiplier = 3;
+    state.streak = 12;
     state.shout = 'Come back here, dinner!';
     state.shoutT = 2;
     farmer.state = 'LUNGE';
     state.farmerState = 'LUNGE';
     state.farmerDist = 2.15;
-    farmer.z = bird.z + 1.65;
-    farmer.x = bird.x - 2.05;
-    bird.y = 0.85;
+    farmer.z = bird.z + 1.55;
+    farmer.x = bird.x - 1.85;
+    bird.y = 1.05;
+    bird.dashing = 0.28;
+    particles.puffFeathers(bird.x, 1.6, bird.z);
+    particles.puffFeathers(bird.x - 0.5, 1.1, bird.z + 0.4);
+    particles.puffCorn(bird.x + 0.3, 0.7, bird.z - 0.3);
+    particles.puffDust(farmer.x + 0.4, 0.35, farmer.z);
+    particles.puffLeaves(bird.x, 2.2, bird.z - 1);
+    particles.tick(0.12);
     bird.grounded = false;
     bird.pose = 'jump';
   }

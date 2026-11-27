@@ -138,6 +138,13 @@ export function createHud(canvas) {
       ctx.fillStyle = bannerColor;
       ctx.strokeText(state.banner, w / 2, h * 0.2);
       ctx.fillText(state.banner, w / 2, h * 0.2);
+      if (state.bonus) {
+        ctx.font = '900 48px Arial Black, Arial, sans-serif';
+        ctx.lineWidth = 8;
+        ctx.fillStyle = '#ffd24a';
+        ctx.strokeText(state.bonus, w / 2, h * 0.2 + 58);
+        ctx.fillText(state.bonus, w / 2, h * 0.2 + 58);
+      }
       ctx.textAlign = 'left';
     }
 
