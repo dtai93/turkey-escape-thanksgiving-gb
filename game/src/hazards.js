@@ -26,9 +26,9 @@ export function makeOven() {
   const doorMesh = mesh(new THREE.BoxGeometry(1.2, 0.95, 0.08), 0x2c2c2c, 0, 0, 0, door);
   mesh(new THREE.BoxGeometry(0.7, 0.28, 0.02), 0xffe08a, 0, 0.1, 0.05, door);
   mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.16, 6), 0xc0c0c0, 0.42, -0.2, 0.06, door);
-  const fire = mesh(new THREE.ConeGeometry(0.45, 0.7, 7), 0xff6a20, 0, 0.35, 0.7, g);
+  const fire = mesh(new THREE.ConeGeometry(0.62, 1.05, 7), 0xff6a20, 0, 0.55, 0.95, g);
   fire.material = new THREE.MeshBasicMaterial({ color: 0xff6a20 });
-  const glow = mesh(new THREE.SphereGeometry(0.28, 6, 5), 0xffd060, 0, 0.55, 0.85, g);
+  const glow = mesh(new THREE.SphereGeometry(0.4, 6, 5), 0xffd060, 0, 0.7, 1.05, g);
   glow.material = new THREE.MeshBasicMaterial({ color: 0xffd060 });
   g.userData.kind = 'oven';
   g.userData.hazard = true;
@@ -54,26 +54,32 @@ export function makeKnife() {
   const g = new THREE.Group();
   const blade = new THREE.Group();
   g.add(blade);
-  const steel = mesh(new THREE.BoxGeometry(0.28, 1.7, 2.6), 0xf4f7fb, 0, 0.95, 0, blade);
+  const steel = mesh(new THREE.BoxGeometry(2.55, 0.58, 0.08), 0xf4f7fb, 0.35, 0.95, 0, blade);
   steel.material = new THREE.MeshBasicMaterial({ color: 0xf7fbff });
-  mesh(new THREE.BoxGeometry(0.34, 0.2, 0.62), 0x6a3a28, 0, 0.18, -1.25, blade);
-  const warn = mesh(new THREE.BoxGeometry(2.2, 0.07, 3.1), 0xff2a2a, 0, 0.08, 0, g);
-  warn.material = new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0.0 });
-  const flash = mesh(new THREE.BoxGeometry(0.08, 2.1, 2.7), 0xff3a2a, 1.05, 1.15, 0, g);
-  flash.material = new THREE.MeshBasicMaterial({ color: 0xff3a2a, transparent: true, opacity: 0.0, depthWrite: false });
+  mesh(new THREE.BoxGeometry(2.3, 0.08, 0.1), 0xb7c0cc, 0.25, 1.22, 0, blade);
+  const tip = mesh(new THREE.ConeGeometry(0.3, 0.72, 4), 0xf7fbff, 1.85, 0.95, 0, blade);
+  tip.rotation.z = -Math.PI / 2;
+  tip.material = new THREE.MeshBasicMaterial({ color: 0xf7fbff });
+  const handle = mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.72, 6), 0x6a3a28, -1.2, 0.95, 0, blade);
+  handle.rotation.z = Math.PI / 2;
+  mesh(new THREE.BoxGeometry(0.08, 0.28, 0.16), 0xe0b060, -0.82, 0.95, 0, blade);
+  const warn = mesh(new THREE.BoxGeometry(3.1, 0.05, 2.4), 0xff2a2a, 0, 0.07, 0, g);
+  warn.material = new THREE.MeshBasicMaterial({ color: 0xff2020, transparent: true, opacity: 0.0 });
+  const flash = mesh(new THREE.BoxGeometry(2.5, 0.1, 0.12), 0xff3a2a, 0.3, 1.28, 0.08, blade);
+  flash.material = new THREE.MeshBasicMaterial({ color: 0xff3030, transparent: true, opacity: 0.0, depthWrite: false });
   g.userData.kind = 'knife';
   g.userData.hazard = true;
-  g.userData.h = 1.2;
+  g.userData.h = 1.15;
   g.userData.tick = (t) => {
     const cycle = (t + (g.userData.phase || 0)) % 2.6;
     const telegraph = cycle > 1.35 && cycle <= 1.9;
     const slam = cycle > 1.9 && cycle < 2.35;
     const hot = telegraph || slam;
-    const pulse = hot ? 0.55 + Math.sin(t * 30) * 0.25 : 0;
-    warn.material.opacity = pulse;
-    flash.material.opacity = pulse * 0.85;
-    blade.position.y = slam ? 0.02 : 2.8;
-    blade.rotation.z = slam ? 0 : 0.15;
+    const pulse = hot ? 0.62 + Math.sin(t * 30) * 0.22 : 0;
+    warn.material.opacity = pulse * 0.85;
+    flash.material.opacity = slam ? 0.95 : pulse * 0.2;
+    blade.position.y = slam ? 0.05 : 2.15;
+    blade.rotation.z = slam ? -0.18 : 0.55;
     g.userData.hot = slam;
     g.userData.warn = telegraph;
   };
@@ -122,10 +128,17 @@ export function primeShotHazards(root, time, bird) {
       if (!found.knife && kind === 'knife') found.knife = obj;
     });
   }
-  drop(found.oven, -2.35, 7.4);
-  drop(found.knife, 2.35, 5.4);
-  if (found.oven) found.oven.scale.setScalar(1.45);
-  if (found.knife) found.knife.scale.setScalar(1.15);
+  drop(found.oven, -2.35, 2.4);
+  drop(found.knife, 0.05, -1.15);
+  if (found.oven) {
+    found.oven.scale.setScalar(1.65);
+    found.oven.rotation.y = 0.6;
+  }
+  if (found.knife) {
+    found.knife.scale.setScalar(1.35);
+    found.knife.rotation.y = 0.15;
+    found.knife.position.y = -0.55;
+  }
   if (found.oven) found.oven.userData.phase = phaseFor(time, 3.2, 2.55);
   if (found.knife) found.knife.userData.phase = phaseFor(time, 2.6, 2.12);
 }

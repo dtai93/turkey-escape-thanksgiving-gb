@@ -9,20 +9,23 @@ export function createCameraRig(camera) {
   return {
     snap: true,
     update(bird, farmer, state, dt) {
-      desired.set(bird.x + 0.4, 3.2, bird.z + 7.35);
-      look.set(bird.x, 0.9, bird.z - 8.2);
-      if (state.shot === 'kitchen') {
-        desired.set(bird.x, 3.55, bird.z + 5.15);
-        look.set(bird.x, 0.65, bird.z - 9.5);
+      desired.set(bird.x - 0.25, 2.35, bird.z + 5.85);
+      look.set(bird.x + 0.1, 0.62, bird.z - 2.15);
+      if (state.shot === 'cover') {
+        desired.set(bird.x + 0.15, 2.55, bird.z + 6.15);
+        look.set(bird.x - 0.1, 0.42, bird.z - 2.4);
+      } else if (state.shot === 'kitchen') {
+        desired.set(bird.x + 0.25, 2.2, bird.z + 5.5);
+        look.set(bird.x - 0.25, 0.7, bird.z - 2.6);
       } else if (state.mode === 'title') {
-        desired.set(-1.1, 2.25, 4.9);
-        look.set(0.55, 0.85, -2.8);
+        desired.set(-0.7, 1.9, -1.6);
+        look.set(0.15, 0.7, -8.2);
       } else if (state.caughtPose) {
-        desired.set(bird.x + 3.5, 2.25, bird.z + 4.5);
-        look.set(bird.x + 0.1, 1.0, bird.z + 0.2);
+        desired.set(bird.x - 2.5, 1.72, bird.z + 3.5);
+        look.set(bird.x + 2.1, 0.95, bird.z - 0.6);
       } else if (state.escapedPose) {
-        desired.set(bird.x - 2.6, 2.15, bird.z + 4.8);
-        look.set(bird.x, 1.05, bird.z - 7);
+        desired.set(bird.x - 2.4, 1.9, bird.z + 4.4);
+        look.set(bird.x, 1.0, bird.z - 6);
       }
       if (this.snap) {
         camera.position.copy(desired);

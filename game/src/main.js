@@ -103,8 +103,8 @@ function syncWorld(dt) {
   const shout = state.shoutT > 0 ? state.shout : '';
   farmerMesh.userData.update(farmer.phase, farmer.state, shout, state.farmerSweep || 0);
   if (state.caughtPose) {
-    farmerMesh.position.z = bird.z + 1.35;
-    farmerMesh.position.x = bird.x + 0.35;
+    farmerMesh.position.z = bird.z + 0.85;
+    farmerMesh.position.x = bird.x + 0.55;
     farmer.state = 'LUNGE';
     farmerMesh.userData.update(farmer.phase, 'LUNGE', 'Got you, dinner!', 0);
     turkey.userData.update(bird.phase, 'panic', bird.y);
@@ -339,14 +339,12 @@ if (query.name) {
     state.shoutT = 2;
     farmer.state = 'LUNGE';
     state.farmerState = 'LUNGE';
-    state.farmerDist = 1.85;
-    farmer.z = bird.z + 1.85;
-    farmer.x = bird.x - 1.45;
-    bird.y = Math.min(bird.y, 0.7);
-    if (bird.y > 0.15) {
-      bird.grounded = false;
-      bird.pose = 'jump';
-    }
+    state.farmerDist = 2.45;
+    farmer.z = bird.z + 2.45;
+    farmer.x = bird.x - 1.2;
+    bird.y = 0.72;
+    bird.grounded = false;
+    bird.pose = 'jump';
   }
   if (query.name === 'kitchen') {
     primeShotHazards(track.root, state.time, bird);
@@ -359,15 +357,18 @@ if (query.name) {
     state.shoutT = 2;
     farmer.state = 'CHASE';
     state.farmerState = 'CHASE';
-    state.farmerDist = 2.05;
-    farmer.z = bird.z + 2.05;
-    farmer.x = bird.x + 1.15;
-    bird.sliding = 0.4;
-    bird.grounded = true;
-    bird.y = 0;
-    bird.pose = 'slide';
-    particles.puffFire(-2.2, 1.3, bird.z - 8.4);
-    particles.puffFire(-1.6, 0.8, bird.z - 7.6);
+    state.farmerDist = 2.4;
+    farmer.z = bird.z + 1.85;
+    farmer.x = bird.x + 1.75;
+    state.hat = 'none';
+    turkey.userData.setHat('none');
+    bird.sliding = 0;
+    bird.grounded = false;
+    bird.y = 0.42;
+    bird.x = 0.15;
+    bird.pose = 'jump';
+    particles.puffFire(bird.x - 2.1, 1.15, bird.z - 3.5);
+    particles.puffFire(bird.x - 1.5, 0.7, bird.z - 3.1);
     particles.tick(0.016);
   }
   if (query.name === 'end') {
@@ -378,6 +379,12 @@ if (query.name) {
   }
   if (query.name === 'title') {
     state.mode = 'title';
+    bird.x = -0.55;
+    bird.z = -5.6;
+    bird.y = 0;
+    bird.pose = 'idle';
+    farmer.x = 0.85;
+    farmer.z = -4.0;
     farmer.state = 'SEARCH';
     state.farmerState = 'SEARCH';
     state.shout = '?';

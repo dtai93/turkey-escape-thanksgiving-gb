@@ -41,8 +41,10 @@ export function createFarmer() {
   add(rig, new THREE.BoxGeometry(0.16, 0.55, 0.08), PALETTE.denim, -0.16, 1.2, 0.18);
   add(rig, new THREE.BoxGeometry(0.16, 0.55, 0.08), PALETTE.denim, 0.16, 1.2, 0.18);
   const shirt = add(rig, new THREE.BoxGeometry(0.78, 0.48, 0.42), PALETTE.shirt, 0, 1.62, 0);
-  add(shirt, new THREE.BoxGeometry(0.8, 0.06, 0.44), 0xf2efe4, 0, 0.08, 0);
-  add(shirt, new THREE.BoxGeometry(0.8, 0.06, 0.44), 0x1e3a28, 0, -0.08, 0);
+  add(shirt, new THREE.BoxGeometry(0.8, 0.07, 0.44), 0xf2efe4, 0, 0.1, 0);
+  add(shirt, new THREE.BoxGeometry(0.8, 0.07, 0.44), 0x1e3a28, 0, -0.1, 0);
+  add(shirt, new THREE.BoxGeometry(0.08, 0.5, 0.45), 0xf2efe4, -0.18, 0, 0);
+  add(shirt, new THREE.BoxGeometry(0.08, 0.5, 0.45), 0x1e3a28, 0.18, 0, 0);
 
   function arm(side) {
     const shoulder = new THREE.Group();
@@ -61,13 +63,15 @@ export function createFarmer() {
   const net = new THREE.Group();
   armR.elbow.add(net);
   net.position.set(0, -0.36, 0.05);
-  add(net, new THREE.CylinderGeometry(0.03, 0.03, 0.85, 5), 0x6a4a28, 0, 0.15, 0);
-  const hoop = add(net, new THREE.TorusGeometry(0.28, 0.025, 6, 12), 0xc8b070, 0, 0.62, 0);
+  add(net, new THREE.CylinderGeometry(0.035, 0.035, 1.15, 6), 0x6a4a28, 0, 0.28, 0);
+  const hoop = add(net, new THREE.TorusGeometry(0.42, 0.035, 8, 16), 0xf0d090, 0, 0.92, 0);
   hoop.rotation.x = Math.PI / 2;
-  const bag = add(net, new THREE.ConeGeometry(0.26, 0.42, 8, 1, true), 0xd8c898, 0, 0.4, 0);
+  const bag = add(net, new THREE.ConeGeometry(0.4, 0.62, 8, 1, true), 0xf4e6c0, 0, 0.58, 0);
   bag.material.side = THREE.DoubleSide;
   bag.material.transparent = true;
-  bag.material.opacity = 0.75;
+  bag.material.opacity = 0.82;
+  add(net, new THREE.BoxGeometry(0.02, 0.7, 0.02), 0x8a6840, 0, 0.85, 0);
+  add(net, new THREE.BoxGeometry(0.7, 0.02, 0.02), 0x8a6840, 0, 0.92, 0);
 
   const lantern = new THREE.Group();
   armL.elbow.add(lantern);
@@ -157,9 +161,10 @@ export function createFarmer() {
     net.rotation.x = -0.4;
     cone.visible = stateName === 'SEARCH';
     if (stateName === 'LUNGE') {
-      armR.shoulder.rotation.x = -1.7;
-      net.rotation.x = 0.35;
-      rig.rotation.x = 0.42;
+      armR.shoulder.rotation.x = -2.15;
+      armR.shoulder.rotation.z = -0.9;
+      net.rotation.x = 0.15;
+      rig.rotation.x = 0.22;
     } else if (stateName === 'SEARCH') {
       const sweepAngle = Math.sin(sweep || phase) * 0.7;
       armL.shoulder.rotation.z = sweepAngle;

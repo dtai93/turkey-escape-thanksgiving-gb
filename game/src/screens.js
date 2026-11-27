@@ -9,26 +9,25 @@ export function createScreens(onRestart) {
   const title = document.createElement('div');
   title.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;text-align:center;pointer-events:none;';
   title.innerHTML = [
-    '<div style="background:rgba(32,14,8,0.72);border:4px solid #ffd7a0;border-radius:18px;padding:22px 36px 18px;color:#fff6e4;max-width:920px">',
-    '<div style="letter-spacing:6px;font-weight:800;font-size:22px;color:#ffb15e">CRANBERRY HOLLOW</div>',
-    '<div style="font-weight:900;font-size:54px;line-height:1.05;margin:6px 0 8px;text-shadow:0 4px 0 #5a2010">The Great Drumstick Dash</div>',
+    '<div style="background:rgba(32,14,8,0.62);border:4px solid #ffd7a0;border-radius:18px;padding:16px 28px 14px;color:#fff6e4;max-width:860px">',
+    '<div style="letter-spacing:7px;font-weight:800;font-size:26px;color:#ffb15e">CRANBERRY HOLLOW</div>',
+    '<div style="font-weight:900;font-size:52px;line-height:1.02;margin:4px 0 6px;text-shadow:0 4px 0 #5a2010">The Great Drumstick Dash</div>',
     '<div style="font-weight:800;font-size:28px;color:#ffe08a">PRESS SPACE TO RUN</div>',
-    '<div id="best-line" style="margin-top:8px;font-size:18px;font-weight:700"></div>',
-    '<div id="hat-line" style="margin-top:4px;font-size:16px;font-weight:800;color:#ffb15e"></div>',
-    '<div style="margin-top:10px;font-size:15px;color:#ffd7a0">A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · P pause</div>',
+    '<div id="best-line" style="margin-top:6px;font-size:20px;font-weight:800"></div>',
+    '<div id="hat-line" style="margin-top:2px;font-size:18px;font-weight:800;color:#ffb15e"></div>',
+    '<div style="margin-top:8px;font-size:18px;font-weight:700;color:#ffd7a0">A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · P pause · M mute</div>',
     '</div>',
   ].join('');
   root.appendChild(title);
 
   const end = document.createElement('div');
-  end.style.cssText = 'position:absolute;inset:0;display:none;align-items:flex-end;justify-content:center;padding-bottom:18px;pointer-events:none;';
+  end.style.cssText = 'position:absolute;inset:0;display:none;align-items:center;justify-content:flex-end;padding-right:28px;pointer-events:none;';
   end.innerHTML = [
-    '<div style="background:rgba(28,12,8,0.82);border:4px solid #ffd7a0;border-radius:18px;padding:22px 34px;color:#fff6e4;text-align:center;min-width:460px;pointer-events:auto">',
-    '<div id="end-title" style="font-weight:900;font-size:64px;text-shadow:0 4px 0 #5a2010">CAUGHT!</div>',
-    '<div id="end-sub" style="font-weight:700;font-size:20px;color:#ffd7a0;margin-bottom:8px"></div>',
-    '<div id="end-stats" style="font-size:20px;line-height:1.45;font-weight:700"></div>',
-    '<div style="margin-top:12px;font-weight:800;font-size:22px;color:#ffe08a">PRESS R / ENTER TO RUN AGAIN</div>',
-    '<button id="restart" type="button" style="margin-top:12px;font-weight:900;font-size:22px;padding:10px 22px;border-radius:10px;border:3px solid #ffd7a0;background:#a33228;color:#fff6e4;cursor:pointer">RESTART</button>',
+    '<div style="background:rgba(28,12,8,0.78);border:4px solid #ffd7a0;border-radius:18px;padding:18px 28px;color:#fff6e4;text-align:center;width:420px;pointer-events:auto">',
+    '<div id="end-title" style="font-weight:900;font-size:58px;text-shadow:0 4px 0 #5a2010">CAUGHT!</div>',
+    '<div id="end-sub" style="font-weight:700;font-size:18px;color:#ffd7a0;margin-bottom:8px"></div>',
+    '<div id="end-stats" style="font-size:22px;line-height:1.4;font-weight:800"></div>',
+    '<button id="restart" type="button" style="margin-top:14px;font-weight:900;font-size:22px;padding:12px 18px;border-radius:12px;border:3px solid #ffd7a0;background:#a33228;color:#fff6e4;cursor:pointer">RUN AGAIN (R / ENTER)</button>',
     '</div>',
   ].join('');
   root.appendChild(end);

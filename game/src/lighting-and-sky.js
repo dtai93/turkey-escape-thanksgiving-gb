@@ -21,7 +21,7 @@ function skyTexture() {
 }
 
 export function createLighting(scene) {
-  scene.fog = new THREE.Fog(PALETTE.fog, 28, 78);
+  scene.fog = new THREE.Fog(PALETTE.fog, 16, 52);
   scene.background = new THREE.Color(PALETTE.skyHorizon);
 
   const sky = new THREE.Mesh(
@@ -62,7 +62,7 @@ export function createLighting(scene) {
     sun,
     follow(x, z) {
       sky.position.set(x, 0, z);
-      sun.position.set(x - 12, 16, z + 8);
+      sun.position.set(x - 14, 9, z + 10);
       sun.target.position.set(x, 0, z - 6);
       sun.target.updateMatrixWorld();
       sunDisc.position.set(x + 18, 7.5, z - 48);

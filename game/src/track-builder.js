@@ -117,6 +117,12 @@ function dressKitchen(group, index, rng) {
   const right = makeCounter(LEN);
   right.position.set(3.5, 0, 0);
   group.add(right);
+  box(group, 0.4, 3.4, LEN, 0xf4ead8, -5.4, 1.7, -LEN / 2);
+  box(group, 0.4, 3.4, LEN, 0xf4ead8, 5.4, 1.7, -LEN / 2);
+  box(group, 11.2, 0.16, LEN, 0xe4d4bc, 0, 3.35, -LEN / 2);
+  box(group, 0.08, 0.85, 1.6, 0xffc878, -5.15, 2.15, -7);
+  box(group, 0.08, 0.85, 1.6, 0xffc878, 5.15, 2.15, -16);
+  box(group, 1.1, 0.7, 0.08, 0x8e2c32, -5.15, 2.55, -12);
   place(group, makeCabinet(), -3.5, -3);
   place(group, makeCabinet(), 3.5, -14);
   const oven = makeOven();

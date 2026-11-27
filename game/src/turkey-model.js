@@ -23,32 +23,32 @@ export function createTurkey() {
   const rig = new THREE.Group();
   group.add(rig);
 
-  const body = add(rig, new THREE.SphereGeometry(0.62, 14, 10), PALETTE.turkey, 0, 0.78, 0);
-  body.scale.set(1.15, 0.92, 1.35);
+  const body = add(rig, new THREE.SphereGeometry(0.58, 14, 10), PALETTE.turkey, 0, 0.78, 0.05);
+  body.scale.set(1.2, 0.95, 1.02);
   const breast = add(rig, new THREE.SphereGeometry(0.42, 12, 8), PALETTE.turkeyLight, 0, 0.72, 0.38);
   breast.scale.set(0.95, 0.8, 0.7);
 
   const tail = new THREE.Group();
-  tail.position.set(0, 0.95, -0.45);
+  tail.position.set(0, 1.02, -0.78);
   rig.add(tail);
-  const featherGeo = new THREE.BoxGeometry(0.22, 0.95, 0.06);
-  const tipGeo = new THREE.BoxGeometry(0.2, 0.34, 0.06);
-  const bands = [PALETTE.turkey, 0x9a3e22, 0xb85a30, PALETTE.turkeyLight, 0x8a3818];
-  for (let i = 0; i < 9; i += 1) {
+  const featherGeo = new THREE.BoxGeometry(0.46, 1.55, 0.1);
+  const tipGeo = new THREE.BoxGeometry(0.4, 0.46, 0.12);
+  const bands = [0x6b3016, 0xc45122, 0xf3d7a4, 0x8d3a18, 0xd47838, 0xfff1d4];
+  for (let i = 0; i < 11; i += 1) {
     const feather = new THREE.Group();
-    const angle = (i - 4) * 0.2;
+    const angle = (i - 5) * 0.17;
     feather.rotation.z = angle;
-    add(feather, featherGeo, bands[i % bands.length], 0, 0.36, 0);
-    add(feather, tipGeo, PALETTE.cream, 0, 0.78, 0.01);
+    add(feather, featherGeo, bands[i % bands.length], 0, 0.7, 0);
+    add(feather, tipGeo, 0xfff6e4, 0, 1.52, 0.02);
     tail.add(feather);
   }
 
   function wing(side) {
     const w = new THREE.Group();
-    w.position.set(0.52 * side, 0.86, 0.05);
-    const upper = add(w, new THREE.SphereGeometry(0.28, 8, 6), PALETTE.turkey, 0.1 * side, 0, 0);
-    upper.scale.set(1.35, 0.42, 0.85);
-    add(w, new THREE.BoxGeometry(0.4, 0.07, 0.2), PALETTE.cream, 0.36 * side, -0.04, 0.02);
+    w.position.set(0.72 * side, 0.9, 0.02);
+    const upper = add(w, new THREE.SphereGeometry(0.28, 8, 6), PALETTE.turkey, 0.16 * side, 0, 0);
+    upper.scale.set(1.9, 0.5, 1.05);
+    add(w, new THREE.BoxGeometry(0.62, 0.08, 0.22), PALETTE.cream, 0.52 * side, -0.02, 0.02);
     rig.add(w);
     return w;
   }
@@ -127,30 +127,30 @@ export function createTurkey() {
     rig.position.y = running ? lift * 0.05 : 0;
     rig.rotation.set(0, Math.PI, 0);
     rig.scale.set(1, 1, 1);
-    tail.rotation.x = -0.85 + Math.sin(phase * 0.5) * 0.05;
-    tail.rotation.y = Math.sin(phase * 0.5) * 0.08;
-    wingL.rotation.set(0, 0, 0.35);
-    wingR.rotation.set(0, 0, -0.35);
-    neck.rotation.x = 0.12;
+    tail.rotation.x = -0.28 + Math.sin(phase * 0.5) * 0.04;
+    tail.rotation.y = Math.sin(phase * 0.5) * 0.06;
+    wingL.rotation.set(0.15, 0.2, 0.7);
+    wingR.rotation.set(0.15, -0.2, -0.7);
+    neck.rotation.x = -0.15;
     snood.position.y = 0.02 + Math.sin(phase * 2) * 0.015;
 
     if (pose === 'jump') {
-      wingL.rotation.set(-0.9, 0.4, 1.45);
-      wingR.rotation.set(-0.9, -0.4, -1.45);
-      legL.hip.rotation.x = -1.25;
-      legR.hip.rotation.x = -1.05;
-      tail.rotation.x = -1.15;
-      neck.rotation.x = -0.25;
-      rig.position.y = 0.05;
+      wingL.rotation.set(0.1, 0.1, 1.15);
+      wingR.rotation.set(0.1, -0.1, -1.15);
+      legL.hip.rotation.x = -0.35;
+      legR.hip.rotation.x = 0.55;
+      tail.rotation.x = -0.08;
+      neck.rotation.x = -0.7;
+      rig.position.y = 0.08;
     } else if (pose === 'slide') {
-      rig.rotation.x = 1.15;
-      rig.position.y = -0.35;
-      wingL.rotation.z = 0.15;
-      wingR.rotation.z = -0.15;
-      legL.hip.rotation.x = 1.05;
-      legR.hip.rotation.x = 1.05;
-      tail.rotation.x = 0.35;
-      neck.rotation.x = 0.55;
+      rig.rotation.x = 0.72;
+      rig.position.y = -0.22;
+      wingL.rotation.z = 0.2;
+      wingR.rotation.z = -0.2;
+      legL.hip.rotation.x = 0.9;
+      legR.hip.rotation.x = 0.9;
+      tail.rotation.x = -0.05;
+      neck.rotation.x = 0.35;
     } else if (pose === 'hide') {
       rig.scale.set(1.02, 0.58, 1.08);
       rig.position.y = -0.22;
@@ -164,13 +164,16 @@ export function createTurkey() {
       wingR.rotation.z = -0.9 - flap * 0.45;
       tail.rotation.y = Math.sin(phase * 4) * 0.28;
     } else if (pose === 'idle') {
-      neck.rotation.x = 0.22 + Math.sin(phase) * 0.08;
-      tail.rotation.x = -0.22;
+      neck.rotation.x = -0.05 + Math.sin(phase) * 0.08;
+      tail.rotation.x = -0.12;
+      wingL.rotation.z = 0.45;
+      wingR.rotation.z = -0.45;
     }
     shadow.position.y = 0.03 - air;
     shadow.scale.setScalar(air > 0.4 ? 0.75 : 1);
   }
 
+  group.scale.setScalar(1.16);
   group.userData.update = update;
   group.userData.setHat = setHat;
   return group;

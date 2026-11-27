@@ -51,78 +51,73 @@ export function createHud(canvas) {
     ctx.clearRect(0, 0, w, h);
     if (state.mode === 'title' || state.mode === 'end') return;
 
-    panel(16, 16, 250, 92);
+    panel(12, 10, 168, 58);
     ctx.fillStyle = '#ffd7a0';
-    ctx.font = '700 16px Arial, sans-serif';
-    ctx.fillText('SCORE', 32, 40);
-    ctx.fillStyle = '#fff6e4';
-    ctx.font = '900 36px Arial Black, Arial, sans-serif';
-    ctx.fillText(String(Math.floor(state.score)), 32, 80);
-
-    panel(16, 118, 250, 64);
-    ctx.fillStyle = '#ffd7a0';
-    ctx.font = '700 16px Arial, sans-serif';
-    ctx.fillText('DIST', 32, 142);
+    ctx.font = '700 13px Arial, sans-serif';
+    ctx.fillText('SCORE', 24, 28);
     ctx.fillStyle = '#fff6e4';
     ctx.font = '900 28px Arial Black, Arial, sans-serif';
-    ctx.fillText(`${Math.floor(state.distance)} m`, 100, 146);
+    ctx.fillText(String(Math.floor(state.score)), 24, 56);
 
-    const stageW = Math.min(420, w * 0.36);
-    panel((w - stageW) / 2, 16, stageW, 78);
+    panel(188, 10, 150, 58);
+    ctx.fillStyle = '#ffd7a0';
+    ctx.font = '700 13px Arial, sans-serif';
+    ctx.fillText('DIST', 202, 28);
     ctx.fillStyle = '#fff6e4';
     ctx.font = '900 26px Arial Black, Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`STAGE ${state.stageIndex + 1}  ${state.stageName}`, w / 2, 48);
-    ctx.textAlign = 'left';
-    const barX = (w - stageW) / 2 + 18;
-    const barW = stageW - 36;
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(barX, 60, barW, 16);
-    ctx.fillStyle = '#e07020';
-    ctx.fillRect(barX, 60, barW * state.stageProgress, 16);
-    ctx.strokeStyle = '#ffd7a0';
-    ctx.strokeRect(barX, 60, barW, 16);
+    ctx.fillText(`${Math.floor(state.distance)} m`, 202, 56);
 
-    panel(w - 280, 16, 264, 120);
+    const stageW = Math.min(340, w * 0.28);
+    panel((w - stageW) / 2, 10, stageW, 58);
+    ctx.fillStyle = '#fff6e4';
+    ctx.font = '900 20px Arial Black, Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`STAGE ${state.stageIndex + 1}  ${state.stageName}`, w / 2, 34);
+    ctx.textAlign = 'left';
+    const barX = (w - stageW) / 2 + 14;
+    const barW = stageW - 28;
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(barX, 44, barW, 12);
+    ctx.fillStyle = '#e07020';
+    ctx.fillRect(barX, 44, barW * state.stageProgress, 12);
+    ctx.strokeStyle = '#ffd7a0';
+    ctx.strokeRect(barX, 44, barW, 12);
+
+    panel(w - 292, 10, 280, 58);
     ctx.fillStyle = '#ffd7a0';
-    ctx.font = '700 16px Arial, sans-serif';
-    ctx.fillText('LIVES', w - 260, 40);
-    for (let i = 0; i < 3; i += 1) feather(w - 160 + i * 36, 36, i < state.lives);
+    ctx.font = '700 13px Arial, sans-serif';
+    ctx.fillText('LIVES', w - 278, 28);
+    for (let i = 0; i < 3; i += 1) feather(w - 214 + i * 28, 26, i < state.lives);
     const danger = state.farmerDist < 3.2;
     ctx.fillStyle = danger ? '#ffb0a0' : '#ffd7a0';
-    ctx.font = '700 16px Arial, sans-serif';
-    ctx.fillText('FARMER', w - 260, 78);
+    ctx.font = '700 13px Arial, sans-serif';
+    ctx.fillText('FARMER', w - 278, 52);
     ctx.fillStyle = danger ? '#ff5a3a' : '#fff6e4';
-    ctx.font = '900 28px Arial Black, Arial, sans-serif';
-    ctx.fillText(`${state.farmerDist.toFixed(1)} m`, w - 150, 82);
+    ctx.font = '900 20px Arial Black, Arial, sans-serif';
+    ctx.fillText(`${state.farmerDist.toFixed(1)} m`, w - 200, 54);
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(w - 260, 98, 220, 14);
+    ctx.fillRect(w - 112, 42, 86, 10);
     const gauge = Math.max(0, Math.min(1, 1 - state.farmerDist / 12));
     ctx.fillStyle = danger ? '#ff3a2a' : '#f0a030';
-    ctx.fillRect(w - 260, 98, 220 * gauge, 14);
+    ctx.fillRect(w - 112, 42, 86 * gauge, 10);
 
-    panel(w - 280, 148, 264, 78);
-    ctx.fillStyle = '#ffd7a0';
-    ctx.font = '700 16px Arial, sans-serif';
-    ctx.fillText('STAMINA', w - 260, 172);
-    ctx.fillText(`DECOY ${state.decoys}`, w - 120, 172);
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(w - 260, 184, 220, 14);
+    ctx.fillStyle = 'rgba(20,10,6,0.55)';
+    ctx.fillRect(12, 74, 120, 8);
     ctx.fillStyle = state.stamina < 0.42 ? '#ff5a3a' : '#7dcf6a';
-    ctx.fillRect(w - 260, 184, 220 * Math.max(0, Math.min(1, state.stamina)), 14);
-    ctx.fillStyle = '#fff6e4';
-    ctx.font = '900 18px Arial Black, Arial, sans-serif';
-    ctx.fillText(`HANK: ${state.farmerState}`, w - 260, 216);
+    ctx.fillRect(12, 74, 120 * Math.max(0, Math.min(1, state.stamina)), 8);
+    ctx.fillStyle = '#ffd7a0';
+    ctx.font = '700 12px Arial, sans-serif';
+    ctx.fillText(`DECOY ${state.decoys}`, 140, 82);
 
     if (state.hidden || state.hideMeter > 0.02) {
-      panel(16, 196, 250, 58);
+      panel(12, 88, 210, 36);
       ctx.fillStyle = '#9ad0ff';
-      ctx.font = '700 16px Arial, sans-serif';
-      ctx.fillText('OUT OF SIGHT', 32, 218);
+      ctx.font = '700 13px Arial, sans-serif';
+      ctx.fillText('HIDDEN', 24, 112);
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
-      ctx.fillRect(32, 228, 210, 14);
+      ctx.fillRect(90, 102, 116, 10);
       ctx.fillStyle = state.hideMeter > 0.75 ? '#ff5a3a' : '#7ec8ff';
-      ctx.fillRect(32, 228, 210 * Math.max(0, Math.min(1, state.hideMeter)), 14);
+      ctx.fillRect(90, 102, 116 * Math.max(0, Math.min(1, state.hideMeter)), 10);
     }
 
     if (state.flash > 0) {
@@ -132,8 +127,8 @@ export function createHud(canvas) {
 
     if (state.bannerT > 0 && state.banner) {
       ctx.textAlign = 'center';
-      ctx.font = '900 54px Arial Black, Arial, sans-serif';
-      ctx.lineWidth = 8;
+      ctx.font = '900 64px Arial Black, Arial, sans-serif';
+      ctx.lineWidth = 10;
       ctx.strokeStyle = '#2a120c';
       const bannerColor = state.banner === 'OUCH!' || state.banner === 'SPOTTED!' || state.banner === 'CORNERED!'
         ? '#ff5a3a'
@@ -141,8 +136,8 @@ export function createHud(canvas) {
           ? '#9ad0ff'
           : '#ffe08a';
       ctx.fillStyle = bannerColor;
-      ctx.strokeText(state.banner, w / 2, h * 0.28);
-      ctx.fillText(state.banner, w / 2, h * 0.28);
+      ctx.strokeText(state.banner, w / 2, h * 0.2);
+      ctx.fillText(state.banner, w / 2, h * 0.2);
       ctx.textAlign = 'left';
     }
 
@@ -152,8 +147,8 @@ export function createHud(canvas) {
       ctx.lineWidth = 6;
       ctx.strokeStyle = '#2a120c';
       ctx.fillStyle = '#fff6e4';
-      ctx.strokeText(state.shout, w / 2, h * 0.36);
-      ctx.fillText(state.shout, w / 2, h * 0.36);
+      ctx.strokeText(state.shout, w * 0.72, h * 0.3);
+      ctx.fillText(state.shout, w * 0.72, h * 0.3);
       ctx.textAlign = 'left';
     }
 
@@ -166,6 +161,8 @@ export function createHud(canvas) {
       ctx.fillText('PAUSED', w / 2, h / 2);
       ctx.font = '700 22px Arial, sans-serif';
       ctx.fillText('PRESS P TO RUN', w / 2, h / 2 + 40);
+      ctx.font = '700 18px Arial, sans-serif';
+      ctx.fillText('A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · M mute', w / 2, h / 2 + 78);
       ctx.textAlign = 'left';
     }
   }
