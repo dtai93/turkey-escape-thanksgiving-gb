@@ -291,6 +291,25 @@ function simulate(dt) {
   audio.tick(dt, state.mode === MODE_RUN);
 }
 
+function shovePropsClear(actor, root) {
+  root.updateMatrixWorld(true);
+  actor.updateMatrixWorld(true);
+  const actorBox = new THREE.Box3().setFromObject(actor);
+  actorBox.expandByScalar(0.35);
+  const propBox = new THREE.Box3();
+  const size = new THREE.Vector3();
+  root.children.forEach((segment) => {
+    segment.children.forEach((prop) => {
+      propBox.setFromObject(prop);
+      propBox.getSize(size);
+      if (size.x > 5 || size.z > 6 || size.y < 0.2) return;
+      if (!propBox.intersectsBox(actorBox)) return;
+      const side = prop.position.x >= 0 ? 1 : -1;
+      prop.position.x += side * 5.4;
+    });
+  });
+}
+
 let shotLeft = query.name ? shotSteps(query.name) : 0;
 if (query.name) {
   state.shot = query.name;
@@ -406,6 +425,10 @@ if (query.name) {
     state.shoutT = 2;
   }
   syncWorld(STEP);
+  if (query.name === 'cover' || query.name === 'end') {
+    shovePropsClear(farmerMesh, track.root);
+    shovePropsClear(turkey, track.root);
+  }
   renderer.render(scene, camera);
   hud.draw(state);
   screens.show(state);
