@@ -7,16 +7,16 @@ export function createScreens(onRestart) {
   document.body.appendChild(root);
 
   const title = document.createElement('div');
-  title.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;text-align:center;pointer-events:none;';
+  title.style.cssText = 'position:absolute;inset:0;pointer-events:none;';
   title.innerHTML = [
-    '<div style="background:rgba(32,14,8,0.62);border:4px solid #ffd7a0;border-radius:18px;padding:16px 28px 14px;color:#fff6e4;max-width:860px">',
-    '<div style="letter-spacing:7px;font-weight:800;font-size:26px;color:#ffb15e">CRANBERRY HOLLOW</div>',
-    '<div style="font-weight:900;font-size:52px;line-height:1.02;margin:4px 0 6px;text-shadow:0 4px 0 #5a2010">The Great Drumstick Dash</div>',
-    '<div style="font-weight:800;font-size:28px;color:#ffe08a">PRESS SPACE TO RUN</div>',
-    '<div id="best-line" style="margin-top:6px;font-size:20px;font-weight:800"></div>',
-    '<div id="hat-line" style="margin-top:2px;font-size:18px;font-weight:800;color:#ffb15e"></div>',
-    '<div style="margin-top:8px;font-size:18px;font-weight:700;color:#ffd7a0">A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · P pause · M mute</div>',
+    '<div style="position:absolute;top:16px;left:18px;background:rgba(32,14,8,0.78);border:4px solid #ffd7a0;border-radius:16px;padding:12px 16px 12px;color:#fff6e4;text-align:left">',
+    '<div style="letter-spacing:4px;font-weight:800;font-size:20px;color:#ffb15e">CRANBERRY HOLLOW</div>',
+    '<div style="font-weight:900;font-size:30px;line-height:1.02;margin:2px 0 4px;white-space:nowrap;text-shadow:0 3px 0 #5a2010">The Great Drumstick Dash</div>',
+    '<div style="font-weight:800;font-size:22px;color:#ffe08a">PRESS SPACE TO RUN</div>',
     '</div>',
+    '<div id="best-line" style="position:absolute;left:22px;bottom:36px;font-size:16px;font-weight:800;color:#fff6e4;text-shadow:0 2px 0 #3a1808"></div>',
+    '<div id="hat-line" style="position:absolute;left:22px;bottom:16px;font-size:15px;font-weight:800;color:#ffb15e;text-shadow:0 2px 0 #3a1808"></div>',
+    '<div style="position:absolute;right:18px;bottom:14px;font-size:14px;font-weight:800;color:#ffd7a0;text-shadow:0 2px 0 #3a1808">A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · P pause · M mute</div>',
   ].join('');
   root.appendChild(title);
 

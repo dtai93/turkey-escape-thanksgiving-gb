@@ -22,8 +22,9 @@ export function createCameraRig(camera) {
         desired.set(bird.x + 0.2, 2.25, bird.z + 5.35);
         look.set(bird.x - 0.35, 0.82, bird.z - 4.8);
       } else if (state.mode === 'title') {
-        desired.set(-1.6, 2.55, 1.4);
-        look.set(0.1, 0.85, -9.4);
+        // Front 3/4: camera is ahead of Tom (more -Z) and off to one side.
+        desired.set(bird.x - 2.55, 1.62, bird.z - 3.7);
+        look.set(bird.x + 1.15, 1.05, bird.z + 0.45);
       } else if (state.caughtPose) {
         desired.set(bird.x - 3.6, 2.35, bird.z + 5.4);
         look.set(bird.x + 1.4, 1.05, bird.z - 1.2);

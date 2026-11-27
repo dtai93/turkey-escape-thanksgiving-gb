@@ -122,10 +122,10 @@ export function createTurkey() {
   const snood = add(head, new THREE.SphereGeometry(0.055, 6, 5), PALETTE.wattle, 0, 0.02, 0.12);
   snood.scale.set(0.7, 1.7, 0.7);
   add(head, new THREE.SphereGeometry(0.07, 6, 5), PALETTE.wattle, 0, -0.12, 0.08);
-  const eyeL = add(head, new THREE.SphereGeometry(0.045, 6, 5), 0xf6f6f6, -0.08, 0.06, 0.14);
-  const eyeR = add(head, new THREE.SphereGeometry(0.045, 6, 5), 0xf6f6f6, 0.08, 0.06, 0.14);
-  add(eyeL, new THREE.SphereGeometry(0.022, 5, 4), 0x1a120c, 0, 0, 0.03);
-  add(eyeR, new THREE.SphereGeometry(0.022, 5, 4), 0x1a120c, 0, 0, 0.03);
+  const eyeL = add(head, new THREE.SphereGeometry(0.068, 8, 6), 0xf6f6f6, -0.09, 0.07, 0.15);
+  const eyeR = add(head, new THREE.SphereGeometry(0.068, 8, 6), 0xf6f6f6, 0.09, 0.07, 0.15);
+  const pupilL = add(eyeL, new THREE.SphereGeometry(0.034, 6, 5), 0x1a120c, 0, 0, 0.045);
+  const pupilR = add(eyeR, new THREE.SphereGeometry(0.034, 6, 5), 0x1a120c, 0, 0, 0.045);
 
   function leg(side) {
     const hip = new THREE.Group();
@@ -186,6 +186,8 @@ export function createTurkey() {
     wingR.rotation.set(0.15, -0.2, -0.7);
     neck.rotation.x = -0.15;
     snood.position.y = 0.02 + Math.sin(phase * 2) * 0.015;
+    pupilL.position.set(0, 0, 0.045);
+    pupilR.position.set(0, 0, 0.045);
 
     if (pose === 'jump') {
       wingL.rotation.set(0.1, 0.1, 1.15);
@@ -215,7 +217,11 @@ export function createTurkey() {
       const flap = Math.sin(phase * 3);
       wingL.rotation.z = 0.9 + flap * 0.45;
       wingR.rotation.z = -0.9 - flap * 0.45;
-      tail.rotation.y = Math.sin(phase * 4) * 0.28;
+      tail.rotation.x = 0.35;
+      tail.rotation.y = Math.sin(phase * 4) * 0.12;
+      neck.rotation.x = -0.55;
+      pupilL.position.set(0.01, 0.01, -0.012);
+      pupilR.position.set(-0.01, 0.01, -0.012);
     } else if (pose === 'idle') {
       neck.rotation.x = -0.05 + Math.sin(phase) * 0.08;
       tail.rotation.x = -0.12;

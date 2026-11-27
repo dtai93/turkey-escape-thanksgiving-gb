@@ -98,8 +98,10 @@ function beginRun() {
 
 function syncWorld(dt) {
   turkey.position.set(bird.x, bird.y, bird.z);
-  turkey.userData.update(bird.phase, state.mode === MODE_TITLE ? 'idle' : bird.pose, bird.y);
+  const titlePose = state.shot === 'title' ? bird.pose : 'idle';
+  turkey.userData.update(bird.phase, state.mode === MODE_TITLE ? titlePose : bird.pose, bird.y);
   farmerMesh.position.set(farmer.x, 0, farmer.z);
+  farmerMesh.rotation.y = state.shot === 'title' ? Math.PI : 0;
   const shout = state.shoutT > 0 ? state.shout : '';
   farmerMesh.userData.update(farmer.phase, farmer.state, shout, state.farmerSweep || 0);
   if (state.caughtPose) {
@@ -391,15 +393,16 @@ if (query.name) {
   }
   if (query.name === 'title') {
     state.mode = 'title';
-    bird.x = -0.55;
-    bird.z = -5.6;
+    bird.x = -0.35;
+    bird.z = -7.1;
     bird.y = 0;
-    bird.pose = 'idle';
-    farmer.x = 0.85;
-    farmer.z = -4.0;
-    farmer.state = 'SEARCH';
-    state.farmerState = 'SEARCH';
-    state.shout = '?';
+    bird.pose = 'panic';
+    bird.phase = 0.42;
+    farmer.x = bird.x + 2.65;
+    farmer.z = bird.z + 0.85;
+    farmer.state = 'LUNGE';
+    state.farmerState = 'LUNGE';
+    state.shout = '!';
     state.shoutT = 2;
   }
   syncWorld(STEP);
