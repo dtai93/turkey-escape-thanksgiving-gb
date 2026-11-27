@@ -8,6 +8,45 @@ function lambert(color) {
   return new THREE.MeshLambertMaterial({ color });
 }
 
+function featherMaterial(color, offsetFactor) {
+  return new THREE.MeshLambertMaterial({
+    color,
+    polygonOffset: offsetFactor !== 0,
+    polygonOffsetFactor: offsetFactor,
+    polygonOffsetUnits: offsetFactor,
+  });
+}
+
+function featherShape(halfW, height) {
+  const s = new THREE.Shape();
+  s.moveTo(0, 0);
+  s.quadraticCurveTo(halfW * 1.08, height * 0.2, halfW * 0.58, height * 0.55);
+  s.quadraticCurveTo(halfW * 0.26, height * 0.88, 0, height);
+  s.quadraticCurveTo(-halfW * 0.26, height * 0.88, -halfW * 0.58, height * 0.55);
+  s.quadraticCurveTo(-halfW * 1.08, height * 0.2, 0, 0);
+  return s;
+}
+
+function featherGeo(halfW, height) {
+  const geo = new THREE.ExtrudeGeometry(featherShape(halfW, height), {
+    depth: 0.015,
+    bevelEnabled: true,
+    bevelThickness: 0.005,
+    bevelSize: 0.007,
+    bevelSegments: 1,
+    curveSegments: 5,
+  });
+  geo.translate(0, 0, -0.0075);
+  return geo;
+}
+
+const TAIL_BASE_GEO = featherGeo(0.2, 0.82);
+const TAIL_MID_GEO = featherGeo(0.155, 0.56);
+const TAIL_TIP_GEO = featherGeo(0.12, 0.36);
+const TAIL_BASE_MAT = featherMaterial(0x6a3018, 1);
+const TAIL_MID_MAT = featherMaterial(0xc4622a, -1);
+const TAIL_TIP_MAT = featherMaterial(0xfff3d4, -3);
+
 function add(parent, geo, color, x, y, z) {
   const mesh = new THREE.Mesh(geo, lambert(color));
   mesh.position.set(x, y, z);
@@ -31,15 +70,28 @@ export function createTurkey() {
   const tail = new THREE.Group();
   tail.position.set(0, 1.02, -0.78);
   rig.add(tail);
-  const featherGeo = new THREE.BoxGeometry(0.46, 1.55, 0.1);
-  const tipGeo = new THREE.BoxGeometry(0.4, 0.46, 0.12);
-  const bands = [0x6b3016, 0xc45122, 0xf3d7a4, 0x8d3a18, 0xd47838, 0xfff1d4];
   for (let i = 0; i < 11; i += 1) {
     const feather = new THREE.Group();
-    const angle = (i - 5) * 0.17;
-    feather.rotation.z = angle;
-    add(feather, featherGeo, bands[i % bands.length], 0, 0.7, 0);
-    add(feather, tipGeo, 0xfff6e4, 0, 1.52, 0.02);
+    const fromCenter = i - 5;
+    const edge = Math.abs(fromCenter) / 5;
+    feather.rotation.z = fromCenter * 0.15;
+    feather.rotation.x = fromCenter * 0.01;
+    feather.rotation.y = (i % 2 === 0 ? 0.028 : -0.028);
+    // Chase cam sees tail-local -Z. Centre feather sits closest; edges step back.
+    feather.position.z = -0.06 + edge * 0.22;
+    feather.scale.set(1 - edge * 0.06, 1 - edge * 0.16, 1);
+    const base = new THREE.Mesh(TAIL_BASE_GEO, TAIL_BASE_MAT);
+    base.castShadow = true;
+    base.receiveShadow = true;
+    feather.add(base);
+    const mid = new THREE.Mesh(TAIL_MID_GEO, TAIL_MID_MAT);
+    mid.position.set(0, 0.4, -0.03);
+    mid.castShadow = true;
+    feather.add(mid);
+    const tip = new THREE.Mesh(TAIL_TIP_GEO, TAIL_TIP_MAT);
+    tip.position.set(0, 0.84, -0.058);
+    tip.castShadow = true;
+    feather.add(tip);
     tail.add(feather);
   }
 
