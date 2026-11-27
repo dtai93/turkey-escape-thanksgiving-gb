@@ -117,6 +117,8 @@ function syncWorld(dt) {
     laneWarn.material.opacity = 0;
   }
   lighting.follow(bird.x, bird.z);
+  state.birdX = bird.x;
+  state.farmerX = farmer.x;
   rig.update(bird, farmer, state, dt);
 }
 
