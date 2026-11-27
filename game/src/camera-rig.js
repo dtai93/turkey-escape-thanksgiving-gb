@@ -15,8 +15,8 @@ export function createCameraRig(camera) {
         desired.set(bird.x + 0.15, 2.55, bird.z + 6.15);
         look.set(bird.x - 0.1, 0.42, bird.z - 2.4);
       } else if (state.shot === 'kitchen') {
-        desired.set(bird.x + 0.25, 2.2, bird.z + 5.5);
-        look.set(bird.x - 0.25, 0.7, bird.z - 2.6);
+        desired.set(bird.x + 0.35, 2.45, bird.z + 5.7);
+        look.set(bird.x - 0.15, 0.72, bird.z - 2.5);
       } else if (state.mode === 'title') {
         desired.set(-0.7, 1.9, -1.6);
         look.set(0.15, 0.7, -8.2);
