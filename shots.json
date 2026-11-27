@@ -1,0 +1,8 @@
+{
+  "screenshots": [
+    { "file": "1-cover.jpg", "query": "?shot=cover&seed=1" },
+    { "file": "2-kitchen.jpg", "query": "?shot=kitchen&seed=1" },
+    { "file": "3-title.jpg", "query": "?shot=title&seed=1" },
+    { "file": "4-end.jpg", "query": "?shot=end&seed=1" }
+  ]
+}
