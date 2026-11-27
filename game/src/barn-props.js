@@ -2,13 +2,14 @@
 
 import * as THREE from 'three';
 import { PALETTE } from './config.js';
+import { textured } from './textures.js';
 
 function mat(color) {
   return new THREE.MeshLambertMaterial({ color });
 }
 
-function mesh(geo, color, x, y, z, parent) {
-  const m = new THREE.Mesh(geo, mat(color));
+function mesh(geo, color, x, y, z, parent, material) {
+  const m = new THREE.Mesh(geo, material || mat(color));
   m.position.set(x, y, z);
   m.castShadow = true;
   m.receiveShadow = true;
@@ -18,20 +19,27 @@ function mesh(geo, color, x, y, z, parent) {
 
 export function makeStall() {
   const g = new THREE.Group();
-  mesh(new THREE.BoxGeometry(0.12, 1.6, 1.6), 0x7a4e2c, -0.7, 0.8, 0, g);
-  mesh(new THREE.BoxGeometry(0.12, 1.6, 1.6), 0x7a4e2c, 0.7, 0.8, 0, g);
-  mesh(new THREE.BoxGeometry(1.5, 0.7, 0.1), 0xc4925a, 0, 0.45, 0.75, g);
-  mesh(new THREE.BoxGeometry(1.4, 0.08, 1.4), 0xd8b56a, 0, 0.08, 0, g);
+  const post = textured('wood', 1, 2, 0x8a5a32);
+  const board = textured('wood', 2, 1);
+  mesh(new THREE.BoxGeometry(0.12, 1.6, 1.6), 0x7a4e2c, -0.7, 0.8, 0, g, post);
+  mesh(new THREE.BoxGeometry(0.12, 1.6, 1.6), 0x7a4e2c, 0.7, 0.8, 0, g, post);
+  mesh(new THREE.BoxGeometry(1.5, 0.7, 0.1), 0xc4925a, 0, 0.45, 0.75, g, board);
+  mesh(new THREE.BoxGeometry(1.4, 0.08, 1.4), 0xd8b56a, 0, 0.08, 0, g, textured('wood', 2, 2, 0xe0c090));
   g.userData.kind = 'stall';
   return g;
 }
 
 export function makeBarrel() {
   const g = new THREE.Group();
-  const body = mesh(new THREE.CylinderGeometry(0.38, 0.38, 0.85, 10), 0x8a4e28, 0, 0.42, 0, g);
+  const body = mesh(
+    new THREE.CylinderGeometry(0.38, 0.38, 0.85, 12),
+    0x8a4e28,
+    0, 0.42, 0, g,
+    textured('wood', 2, 1, 0x9a5828),
+  );
   body.userData.roll = true;
-  mesh(new THREE.TorusGeometry(0.39, 0.035, 6, 10), 0x5a3218, 0, 0.62, 0, g).rotation.x = Math.PI / 2;
-  mesh(new THREE.TorusGeometry(0.39, 0.035, 6, 10), 0x5a3218, 0, 0.22, 0, g).rotation.x = Math.PI / 2;
+  mesh(new THREE.TorusGeometry(0.39, 0.035, 6, 12), 0x5a3218, 0, 0.62, 0, g).rotation.x = Math.PI / 2;
+  mesh(new THREE.TorusGeometry(0.39, 0.035, 6, 12), 0x5a3218, 0, 0.22, 0, g).rotation.x = Math.PI / 2;
   g.userData.kind = 'barrel';
   g.userData.solid = true;
   g.userData.jumpOver = true;
@@ -49,10 +57,12 @@ export function makeBarrel() {
 
 export function makeLadder() {
   const g = new THREE.Group();
-  mesh(new THREE.BoxGeometry(0.08, 2.2, 0.08), 0xc49a58, -0.28, 1.1, 0, g);
-  mesh(new THREE.BoxGeometry(0.08, 2.2, 0.08), 0xc49a58, 0.28, 1.1, 0, g);
+  const rail = textured('wood', 1, 3);
+  const rung = textured('wood', 2, 1, 0xe0c090);
+  mesh(new THREE.BoxGeometry(0.08, 2.2, 0.08), 0xc49a58, -0.28, 1.1, 0, g, rail);
+  mesh(new THREE.BoxGeometry(0.08, 2.2, 0.08), 0xc49a58, 0.28, 1.1, 0, g, rail);
   for (let i = 0; i < 5; i += 1) {
-    mesh(new THREE.BoxGeometry(0.64, 0.06, 0.06), 0xd8b56a, 0, 0.3 + i * 0.4, 0, g);
+    mesh(new THREE.BoxGeometry(0.64, 0.06, 0.06), 0xd8b56a, 0, 0.3 + i * 0.4, 0, g, rung);
   }
   g.rotation.x = 0.15;
   g.userData.kind = 'ladder';
@@ -87,10 +97,12 @@ export function makeChicken() {
 
 export function makePorch() {
   const g = new THREE.Group();
-  mesh(new THREE.BoxGeometry(7, 0.15, 4), 0xc4a06a, 0, 0.2, 0, g);
-  mesh(new THREE.BoxGeometry(0.15, 2.2, 0.15), 0x8a5a32, -3.2, 1.3, 1.6, g);
-  mesh(new THREE.BoxGeometry(0.15, 2.2, 0.15), 0x8a5a32, 3.2, 1.3, 1.6, g);
-  mesh(new THREE.BoxGeometry(6.6, 0.12, 0.16), 0x6a3a28, 0, 2.4, 1.6, g);
+  const deck = textured('wood', 4, 3);
+  const post = textured('wood', 1, 3, 0x8a5a32);
+  mesh(new THREE.BoxGeometry(7, 0.15, 4), 0xc4a06a, 0, 0.2, 0, g, deck);
+  mesh(new THREE.BoxGeometry(0.15, 2.2, 0.15), 0x8a5a32, -3.2, 1.3, 1.6, g, post);
+  mesh(new THREE.BoxGeometry(0.15, 2.2, 0.15), 0x8a5a32, 3.2, 1.3, 1.6, g, post);
+  mesh(new THREE.BoxGeometry(6.6, 0.12, 0.16), 0x6a3a28, 0, 2.4, 1.6, g, textured('wood', 4, 1, 0x6a3a28));
   g.userData.kind = 'porch';
   return g;
 }

@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import { LANES, PALETTE, WORLD } from './config.js';
 import { makeRng, range, chance } from './random.js';
 import { stageAtDistance, totalLength } from './stages.js';
-import { makeHayBale, makePumpkin, makeCornStalk, makeFenceRun, makeBarn, makeCoop, makeMud, makeKernel } from './farmyard-props.js';
+import { makeHayBale, makeHayTuft, makeLeafPile, makePumpkin, makeCornStalk, makeFenceRun, makeBarn, makeCoop, makeMud, makeKernel } from './farmyard-props.js';
+import { textured } from './textures.js';
 import { makeStall, makeBarrel, makeLadder, makeHangingLantern, makeChicken, makePorch } from './barn-props.js';
 import { makeCounter, makeCabinet, makePieTins, makeRoastingPan, makeGravyBoat, makeRollingPin, kitchenFloor } from './kitchen-props.js';
 import { makeOven, makeKnife } from './hazards.js';
@@ -16,8 +17,8 @@ function mat(color) {
   return new THREE.MeshLambertMaterial({ color });
 }
 
-function box(parent, w, h, d, color, x, y, z) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat(color));
+function box(parent, w, h, d, color, x, y, z, material) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material || mat(color));
   m.position.set(x, y, z);
   m.receiveShadow = true;
   m.castShadow = h > 0.2;
@@ -29,10 +30,12 @@ function empty(group) {
   const dump = group.children.splice(0, group.children.length);
   for (let i = 0; i < dump.length; i += 1) {
     dump[i].traverse((obj) => {
-      if (obj.geometry) obj.geometry.dispose();
+      if (obj.geometry && !obj.geometry.userData.shared) obj.geometry.dispose();
       const material = obj.material;
-      if (Array.isArray(material)) material.forEach((m) => m.dispose());
-      else if (material) material.dispose();
+      const list = Array.isArray(material) ? material : (material ? [material] : []);
+      list.forEach((m) => {
+        if (m && !m.userData.shared) m.dispose();
+      });
     });
   }
 }
@@ -44,11 +47,11 @@ function place(group, obj, x, z) {
 }
 
 function dressFarmyard(group, index, rng) {
-  box(group, 16, 0.25, LEN, PALETTE.ground, 0, -0.12, -LEN / 2);
-  box(group, 5, 0.08, LEN, PALETTE.grass, -6.2, 0.02, -LEN / 2);
-  box(group, 5, 0.08, LEN, PALETTE.grass, 6.2, 0.02, -LEN / 2);
+  box(group, 16, 0.25, LEN, PALETTE.ground, 0, -0.12, -LEN / 2, textured('dirt', 8, 10));
+  box(group, 5, 0.08, LEN, PALETTE.grass, -6.2, 0.02, -LEN / 2, textured('grass', 3, 8));
+  box(group, 5, 0.08, LEN, PALETTE.grass, 6.2, 0.02, -LEN / 2, textured('grass', 3, 8));
   for (let i = 0; i < LANES.length; i += 1) {
-    box(group, 1.7, 0.04, LEN, i === 1 ? 0x7a6234 : 0x745c30, LANES[i], 0.02, -LEN / 2);
+    box(group, 1.7, 0.04, LEN, i === 1 ? 0x7a6234 : 0x745c30, LANES[i], 0.045, -LEN / 2, textured('dirt', 2, 12, 0xd8c090));
   }
   const fenceL = makeFenceRun(LEN - 1);
   fenceL.position.set(-4.6, 0, -0.5);
@@ -80,13 +83,20 @@ function dressFarmyard(group, index, rng) {
     group.add(coop);
   }
   if (chance(rng, 0.6)) place(group, makePumpkin(), 3.6, -range(rng, 2, 16));
+  for (let s = 0; s < 3; s += 1) {
+    place(group, makeLeafPile(), -3.9, -2.4 - s * 6);
+    place(group, makeLeafPile(), 3.95, -4.2 - s * 5.5);
+  }
+  place(group, makeHayTuft(), -4.15, -8);
+  place(group, makeHayTuft(), 4.2, -14);
+  place(group, makePumpkin(), index % 2 === 0 ? -3.75 : 3.8, -17.5);
 }
 
 function dressBarn(group, index, rng) {
-  box(group, 14, 0.25, LEN, 0x6a4630, 0, -0.12, -LEN / 2);
-  box(group, 8, 0.08, LEN, 0xc4a06a, 0, 0.02, -LEN / 2);
+  box(group, 14, 0.25, LEN, 0x6a4630, 0, -0.12, -LEN / 2, textured('dirt', 6, 8, 0x7a5840));
+  box(group, 8, 0.08, LEN, 0xc4a06a, 0, -0.02, -LEN / 2, textured('wood', 4, 10));
   for (let i = 0; i < LANES.length; i += 1) {
-    box(group, 1.55, 0.03, LEN, 0xb8905a, LANES[i], 0.05, -LEN / 2);
+    box(group, 1.55, 0.04, LEN, 0xb8905a, LANES[i], 0.06, -LEN / 2, textured('wood', 1, 8, 0xe4c898));
   }
   const porch = makePorch();
   porch.position.set(0, 0, -LEN / 2);
@@ -107,7 +117,7 @@ function dressBarn(group, index, rng) {
 }
 
 function dressKitchen(group, index, rng) {
-  box(group, 12, 0.2, LEN, 0x8a4038, 0, -0.1, -LEN / 2);
+  box(group, 12, 0.2, LEN, 0x8a4038, 0, -0.12, -LEN / 2);
   const floor = kitchenFloor();
   floor.position.z = 0;
   group.add(floor);
@@ -117,8 +127,8 @@ function dressKitchen(group, index, rng) {
   const right = makeCounter(LEN);
   right.position.set(3.5, 0, 0);
   group.add(right);
-  box(group, 0.4, 3.4, LEN, 0xf4ead8, -5.4, 1.7, -LEN / 2);
-  box(group, 0.4, 3.4, LEN, 0xf4ead8, 5.4, 1.7, -LEN / 2);
+  box(group, 0.4, 3.4, LEN, 0xf4ead8, -5.4, 1.7, -LEN / 2, textured('cabinet', 1, 6, 0xf7f1e4));
+  box(group, 0.4, 3.4, LEN, 0xf4ead8, 5.4, 1.7, -LEN / 2, textured('cabinet', 1, 6, 0xf7f1e4));
   box(group, 11.2, 0.16, LEN, 0xe4d4bc, 0, 3.35, -LEN / 2);
   box(group, 0.08, 0.85, 1.6, 0xffc878, -5.15, 2.15, -7);
   box(group, 0.08, 0.85, 1.6, 0xffc878, 5.15, 2.15, -16);
@@ -139,7 +149,7 @@ function dressKitchen(group, index, rng) {
 }
 
 function dressWoods(group) {
-  box(group, 16, 0.25, LEN, 0x3e5a28, 0, -0.12, -LEN / 2);
+  box(group, 16, 0.25, LEN, 0x3e5a28, 0, -0.12, -LEN / 2, textured('grass', 6, 8, 0x6a7038));
   for (let i = 0; i < 6; i += 1) {
     const tree = new THREE.Group();
     const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.24, 1.4, 6), mat(0x5a3a22));
