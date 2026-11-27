@@ -19,8 +19,9 @@ export function createCameraRig(camera) {
         desired.set(bird.x + 2.55, 3.15, bird.z + 8.15);
         look.set(bird.x - 0.15, 0.95, bird.z - 6.6);
       } else if (state.shot === 'kitchen') {
-        desired.set(bird.x + 0.2, 2.25, bird.z + 5.35);
-        look.set(bird.x - 0.35, 0.82, bird.z - 4.8);
+        // Stay under the kitchen ceiling (y ≈ 3.3) and inside the lane walls.
+        desired.set(bird.x + 0.55, 2.82, bird.z + 6.5);
+        look.set(bird.x - 0.15, 0.55, bird.z - 5.2);
       } else if (state.mode === 'title') {
         // Front 3/4: camera is ahead of Tom (more -Z) and off to one side.
         desired.set(bird.x - 2.55, 1.62, bird.z - 3.7);

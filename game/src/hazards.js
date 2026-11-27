@@ -17,23 +17,70 @@ function mesh(geo, color, x, y, z, parent) {
 
 export function makeOven() {
   const g = new THREE.Group();
-  mesh(new THREE.BoxGeometry(1.7, 1.5, 1.15), 0x3a342f, 0, 0.75, 0, g);
-  mesh(new THREE.BoxGeometry(1.55, 0.1, 1.08), 0xe7d7c0, 0, 1.28, 0, g);
-  mesh(new THREE.BoxGeometry(1.5, 0.16, 1.05), 0x1c1c1c, 0, 1.52, 0, g);
-  mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.42, 6), 0x222222, -0.45, 1.82, -0.15, g);
-  mesh(new THREE.BoxGeometry(1.15, 0.9, 0.08), 0x1a1a1a, 0, 0.72, 0.5, g);
+  const enamel = 0x9c2f2a;
+  const cream = 0xf4e6cf;
+  const iron = 0x241c18;
+  const brass = 0xd4b15a;
+  for (const [x, z] of [[-0.68, -0.42], [0.68, -0.42], [-0.68, 0.42], [0.68, 0.42]]) {
+    mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.16, 6), iron, x, 0.08, z, g);
+  }
+  mesh(new THREE.BoxGeometry(1.72, 1.16, 1.12), enamel, 0, 0.78, 0, g);
+  mesh(new THREE.BoxGeometry(1.8, 0.07, 1.2), cream, 0, 1.36, 0, g);
+  mesh(new THREE.BoxGeometry(1.8, 0.07, 1.2), iron, 0, 0.24, 0, g);
+  mesh(new THREE.BoxGeometry(1.6, 0.08, 1.02), 0x1a1a1a, 0, 1.44, 0, g);
+  const grateGeo = new THREE.TorusGeometry(0.15, 0.018, 6, 12);
+  for (const [x, z] of [[-0.4, -0.2], [0.4, -0.2], [-0.4, 0.2], [0.4, 0.2]]) {
+    const ring = mesh(grateGeo, 0x3c3c3c, x, 1.5, z, g);
+    ring.rotation.x = Math.PI / 2;
+  }
+  const pot = mesh(new THREE.CylinderGeometry(0.16, 0.14, 0.2, 8), 0xd8d4ce, 0.4, 1.64, -0.18, g);
+  pot.scale.set(1, 1, 1);
+  mesh(new THREE.TorusGeometry(0.1, 0.016, 5, 8), brass, 0.4, 1.72, -0.02, g);
+  mesh(new THREE.BoxGeometry(1.7, 0.5, 0.08), cream, 0, 1.74, -0.5, g);
+  for (let i = 0; i < 4; i += 1) {
+    mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.05, 8), brass, -0.54 + i * 0.36, 1.72, -0.44, g);
+  }
+  mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.34, 6), iron, -0.62, 1.96, -0.28, g);
+  mesh(new THREE.BoxGeometry(1.18, 0.84, 0.62), 0x140e0c, 0, 0.78, 0.1, g);
+  mesh(new THREE.BoxGeometry(1.02, 0.025, 0.5), 0x8d949c, 0, 0.58, 0.16, g);
+  mesh(new THREE.BoxGeometry(1.02, 0.025, 0.48), 0x8d949c, 0, 0.96, 0.14, g);
+  const roast = mesh(new THREE.SphereGeometry(0.24, 8, 6), 0x8a3d18, 0, 0.74, 0.2, g);
+  roast.scale.set(1.4, 0.65, 1);
+  const glowMat = new THREE.MeshLambertMaterial({ color: 0x4a1c0c, emissive: new THREE.Color(0xff7a20), emissiveIntensity: 0.35 });
+  const glow = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.7, 0.04), glowMat);
+  glow.position.set(0, 0.78, 0.44);
+  g.add(glow);
   const door = new THREE.Group();
-  door.position.set(0, 0.28, 0.58);
+  door.position.set(0, 0.36, 0.58);
   g.add(door);
-  const doorMesh = mesh(new THREE.BoxGeometry(1.22, 0.98, 0.08), 0x3a3a3a, 0, 0.46, 0, door);
-  mesh(new THREE.BoxGeometry(0.72, 0.22, 0.02), 0xffe08a, 0, 0.7, 0.05, door);
-  mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.18, 6), 0xc0c0c0, 0.42, 0.22, 0.07, door);
-  const roast = mesh(new THREE.SphereGeometry(0.28, 8, 6), 0x8a3d18, 0, 0.55, 0.72, g);
-  roast.scale.set(1.3, 0.75, 1);
-  const fire = mesh(new THREE.ConeGeometry(0.55, 0.9, 7), 0xff6a20, 0.15, 0.7, 0.95, g);
-  fire.material = new THREE.MeshBasicMaterial({ color: 0xff6a20 });
-  const glow = mesh(new THREE.SphereGeometry(0.46, 6, 5), 0xffd060, 0, 0.72, 1.05, g);
-  glow.material = new THREE.MeshBasicMaterial({ color: 0xffd060 });
+  const doorMesh = mesh(new THREE.BoxGeometry(1.32, 0.92, 0.07), cream, 0, 0.46, 0, door);
+  mesh(new THREE.BoxGeometry(1.08, 0.7, 0.03), iron, 0, 0.5, 0.04, door);
+  const glassMat = new THREE.MeshLambertMaterial({
+    color: 0x2a140c,
+    emissive: new THREE.Color(0xff7a20),
+    emissiveIntensity: 0.2,
+    transparent: true,
+    opacity: 0.78,
+  });
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.52, 0.02), glassMat);
+  glass.position.set(0, 0.54, 0.06);
+  door.add(glass);
+  mesh(new THREE.BoxGeometry(0.7, 0.055, 0.055), brass, 0, 0.14, 0.07, door);
+  const flames = new THREE.Group();
+  flames.position.set(0, 0.72, 0.78);
+  g.add(flames);
+  const flameMat = new THREE.MeshLambertMaterial({ color: 0xff5a18, emissive: new THREE.Color(0xff6a20), emissiveIntensity: 1 });
+  const flameGeo = new THREE.ConeGeometry(0.11, 0.36, 6);
+  const flameList = [];
+  for (const [x, y, z] of [[-0.28, 0, 0], [0, 0.06, 0.08], [0.24, -0.02, 0.02], [-0.06, 0.14, 0.1]]) {
+    const flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.position.set(x, y, z);
+    flames.add(flame);
+    flameList.push(flame);
+  }
+  const light = new THREE.PointLight(0xff7a20, 0, 7, 2);
+  light.position.set(0, 0.78, 0.9);
+  g.add(light);
   g.userData.kind = 'oven';
   g.userData.hazard = true;
   g.userData.laneSpan = 1;
@@ -43,11 +90,17 @@ export function makeOven() {
     const open = cycle > 2.15 && cycle < 3.05;
     const warn = cycle > 1.7 && cycle <= 2.15;
     door.rotation.x = open ? -1.25 : warn ? -0.28 : 0;
-    fire.visible = open;
-    glow.visible = open || warn;
-    roast.visible = open || warn;
-    fire.scale.y = open ? 0.75 + Math.sin(t * 18) * 0.22 : 0.2;
-    doorMesh.material.color.setHex(warn ? 0xff5530 : 0x3a3a3a);
+    flames.visible = open;
+    roast.visible = true;
+    glowMat.emissiveIntensity = open ? 1.2 : warn ? 0.7 : 0.18;
+    glassMat.emissiveIntensity = open ? 0.95 : warn ? 0.5 : 0.08;
+    light.intensity = open ? 5 : warn ? 1.4 : 0.12;
+    if (open) {
+      flameList.forEach((flame, i) => {
+        flame.scale.y = 0.75 + Math.sin(t * 18 + i) * 0.32;
+      });
+    }
+    doorMesh.material.color.setHex(warn ? 0xff8866 : cream);
     g.userData.hot = open;
     g.userData.warn = warn;
   };
@@ -55,25 +108,46 @@ export function makeOven() {
   return g;
 }
 
+function carvingBladeGeometry() {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(1.7, 0.05);
+  shape.lineTo(2.15, 0.2);
+  shape.lineTo(1.55, 0.46);
+  shape.lineTo(0, 0.4);
+  shape.lineTo(0, 0);
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: 0.04,
+    bevelEnabled: true,
+    bevelThickness: 0.006,
+    bevelSize: 0.006,
+    bevelSegments: 1,
+    curveSegments: 1,
+  });
+  geo.translate(0, 0, -0.02);
+  return geo;
+}
+
+const CARVING_BLADE = carvingBladeGeometry();
+const STEEL = new THREE.MeshStandardMaterial({ color: 0xf4f7fb, metalness: 0.72, roughness: 0.28 });
+
 export function makeKnife() {
   const g = new THREE.Group();
   const blade = new THREE.Group();
   g.add(blade);
-  const steel = mesh(new THREE.BoxGeometry(2.15, 0.62, 0.1), 0xf4f7fb, 0.42, 0.95, 0, blade);
-  steel.material = new THREE.MeshBasicMaterial({ color: 0xf4f7fb });
-  mesh(new THREE.BoxGeometry(1.95, 0.07, 0.11), 0x8b949e, 0.36, 1.2, 0, blade);
-  const edge = mesh(new THREE.BoxGeometry(2.05, 0.09, 0.12), 0xff241c, 0.4, 0.7, 0.02, blade);
-  edge.material = new THREE.MeshBasicMaterial({ color: 0xff241c });
-  const tip = mesh(new THREE.ConeGeometry(0.28, 0.78, 4), 0xf7fbff, 1.78, 0.95, 0, blade);
-  tip.rotation.z = -Math.PI / 2;
-  tip.scale.set(1, 1, 0.42);
-  tip.material = new THREE.MeshBasicMaterial({ color: 0xf7fbff });
-  const handle = mesh(new THREE.CylinderGeometry(0.09, 0.1, 0.72, 6), 0x6a341c, -0.86, 0.95, 0, blade);
-  handle.rotation.z = Math.PI / 2;
-  mesh(new THREE.BoxGeometry(0.1, 0.18, 0.22), 0xe8c56a, -0.48, 0.95, 0, blade);
-  mesh(new THREE.SphereGeometry(0.045, 6, 5), 0xf2d48a, -1.02, 1.02, 0.07, blade);
-  mesh(new THREE.SphereGeometry(0.045, 6, 5), 0xf2d48a, -0.72, 1.02, 0.07, blade);
-  const warn = mesh(new THREE.BoxGeometry(2.5, 0.045, 1.35), 0xff2a2a, 0.25, 0.05, 0, g);
+  const steel = new THREE.Mesh(CARVING_BLADE, STEEL);
+  steel.position.set(-0.35, 0.58, 0);
+  steel.castShadow = true;
+  steel.receiveShadow = true;
+  blade.add(steel);
+  mesh(new THREE.BoxGeometry(1.55, 0.02, 0.012), 0xffffff, 0.45, 0.66, 0.028, blade);
+  mesh(new THREE.BoxGeometry(0.12, 0.32, 0.1), 0xc9a15a, -0.4, 0.8, 0, blade);
+  mesh(new THREE.BoxGeometry(0.58, 0.16, 0.1), 0x4a2414, -0.78, 0.78, 0, blade);
+  for (const x of [-0.62, -0.78, -0.94]) {
+    const rivet = mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.12, 6), 0xe6c56a, x, 0.78, 0, blade);
+    rivet.rotation.x = Math.PI / 2;
+  }
+  const warn = mesh(new THREE.BoxGeometry(1.7, 0.03, 0.7), 0xff2a2a, 0.4, 0.03, 0, g);
   warn.material = new THREE.MeshBasicMaterial({ color: 0xff2020, transparent: true, opacity: 0.0 });
   g.userData.kind = 'knife';
   g.userData.hazard = true;
@@ -82,12 +156,10 @@ export function makeKnife() {
     const cycle = (t + (g.userData.phase || 0)) % 2.6;
     const telegraph = cycle > 1.35 && cycle <= 1.9;
     const slam = cycle > 1.9 && cycle < 2.35;
-    const hot = telegraph || slam;
-    const pulse = hot ? 0.55 + Math.sin(t * 30) * 0.2 : 0;
-    warn.material.opacity = pulse * 0.9;
+    const pulse = (telegraph || slam) ? 0.55 + Math.sin(t * 30) * 0.2 : 0;
+    warn.material.opacity = telegraph ? pulse * 0.9 : slam ? 0.25 : 0;
     blade.position.y = slam ? 0.02 : 1.55;
     blade.rotation.z = slam ? -0.04 : 0.62;
-    edge.material.color.setHex(slam ? 0xff180e : 0xff5544);
     g.userData.hot = slam;
     g.userData.warn = telegraph;
   };
@@ -135,16 +207,16 @@ export function primeShotHazards(root, time, bird) {
       if (!found.knife && kind === 'knife') found.knife = obj;
     });
   }
-  drop(found.oven, -2.55, 0.55);
-  drop(found.knife, 0.15, -2.05);
+  drop(found.oven, -2.35, 2.15);
+  drop(found.knife, 1.25, -1.15);
   if (found.oven) {
-    found.oven.scale.setScalar(1.55);
-    found.oven.rotation.y = -0.65;
+    found.oven.scale.setScalar(1.42);
+    found.oven.rotation.y = 0.15;
   }
   if (found.knife) {
-    found.knife.scale.setScalar(1.45);
-    found.knife.rotation.set(-0.55, 0.35, -0.15);
-    found.knife.position.y = 0;
+    found.knife.scale.setScalar(0.92);
+    found.knife.rotation.set(0.45, 0.55, 0.72);
+    found.knife.position.y = 0.04;
   }
   if (found.oven) found.oven.userData.phase = phaseFor(time, 3.2, 2.55);
   if (found.knife) found.knife.userData.phase = phaseFor(time, 2.6, 2.08);

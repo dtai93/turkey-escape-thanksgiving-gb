@@ -372,17 +372,17 @@ if (query.name) {
     farmer.state = 'CHASE';
     state.farmerState = 'CHASE';
     state.farmerDist = 2.4;
-    farmer.z = bird.z + 2.15;
-    farmer.x = bird.x + 1.35;
-    state.hat = 'none';
-    turkey.userData.setHat('none');
     bird.sliding = 0;
     bird.grounded = false;
-    bird.y = 0.38;
-    bird.x = -0.05;
+    bird.y = 0.72;
+    bird.x = 0.95;
     bird.pose = 'jump';
-    particles.puffFire(bird.x - 1.7, 1.05, bird.z - 3.4);
-    particles.puffFire(bird.x - 2.2, 0.65, bird.z - 3.7);
+    farmer.z = bird.z + 2.35;
+    farmer.x = bird.x + 1.55;
+    state.hat = 'none';
+    turkey.userData.setHat('none');
+    particles.puffFire(bird.x - 2.3, 1.15, bird.z - 3.1);
+    particles.puffFire(bird.x - 2.7, 0.7, bird.z - 3.5);
     particles.tick(0.016);
   }
   if (query.name === 'end') {
