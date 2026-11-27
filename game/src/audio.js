@@ -54,6 +54,7 @@ export function createAudio() {
   let musicT = 0;
 
   return {
+    step: 0,
     unlock() {
       ensure();
       if (ctx && ctx.state === 'suspended') ctx.resume();
@@ -64,8 +65,11 @@ export function createAudio() {
     },
     gobble() { tone(220, 0.18, 'sawtooth', 0.2, 0.6); tone(140, 0.22, 'square', 0.08, 0.7); },
     shout() { noise(0.25, 0.18, 900); tone(180, 0.2, 'square', 0.08, 1.4); },
-    oven() { noise(0.35, 0.2, 400); },
-    knife() { tone(880, 0.12, 'sawtooth', 0.12, 2.2); },
+    squawk() { tone(740, 0.08, 'square', 0.1, 1.6); tone(520, 0.1, 'square', 0.08, 0.7); },
+    rustle() { noise(0.16, 0.1, 700); },
+    decoy() { noise(0.2, 0.12, 1600); tone(660, 0.12, 'triangle', 0.08, 1.4); },
+    oven() { noise(0.35, 0.2, 400); tone(90, 0.3, 'sawtooth', 0.06, 0.5); },
+    knife() { tone(880, 0.12, 'sawtooth', 0.12, 2.2); tone(1320, 0.08, 'square', 0.05, 1.5); },
     thud() { tone(90, 0.2, 'sine', 0.3, 0.4); },
     whoosh() { noise(0.18, 0.15, 1400); },
     fanfare() {
@@ -85,11 +89,12 @@ export function createAudio() {
       if (!loopOn) {
         loopOn = true;
       }
-      if (musicT > 0.5) {
+      if (musicT > 0.42) {
         musicT = 0;
-        const notes = [392, 440, 494, 440, 349, 392];
-        const n = notes[(Math.random() * notes.length) | 0];
-        tone(n, 0.18, 'triangle', 0.04, 1);
+        const notes = [392, 440, 494, 523, 494, 440, 349, 392];
+        const n = notes[this.step % notes.length];
+        this.step += 1;
+        tone(n, 0.2, 'triangle', 0.045, 1);
       }
     },
   };

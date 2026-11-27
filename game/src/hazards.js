@@ -46,6 +46,7 @@ export function makeOven() {
     g.userData.hot = open;
     g.userData.warn = warn;
   };
+  g.scale.setScalar(1.28);
   return g;
 }
 
@@ -53,11 +54,13 @@ export function makeKnife() {
   const g = new THREE.Group();
   const blade = new THREE.Group();
   g.add(blade);
-  const steel = mesh(new THREE.BoxGeometry(0.18, 1.35, 2.3), 0xd8dee8, 0, 0.7, 0, blade);
-  steel.material = new THREE.MeshLambertMaterial({ color: 0xe8eef6 });
-  mesh(new THREE.BoxGeometry(0.22, 0.16, 0.55), 0x6a3a28, 0, 0.15, -1.15, blade);
-  const warn = mesh(new THREE.BoxGeometry(2.1, 0.04, 2.4), 0xff2a2a, 0, 0.05, 0, g);
+  const steel = mesh(new THREE.BoxGeometry(0.28, 1.7, 2.6), 0xf4f7fb, 0, 0.95, 0, blade);
+  steel.material = new THREE.MeshBasicMaterial({ color: 0xf7fbff });
+  mesh(new THREE.BoxGeometry(0.34, 0.2, 0.62), 0x6a3a28, 0, 0.18, -1.25, blade);
+  const warn = mesh(new THREE.BoxGeometry(2.2, 0.07, 3.1), 0xff2a2a, 0, 0.08, 0, g);
   warn.material = new THREE.MeshBasicMaterial({ color: 0xff2a2a, transparent: true, opacity: 0.0 });
+  const flash = mesh(new THREE.BoxGeometry(0.08, 2.1, 2.7), 0xff3a2a, 1.05, 1.15, 0, g);
+  flash.material = new THREE.MeshBasicMaterial({ color: 0xff3a2a, transparent: true, opacity: 0.0, depthWrite: false });
   g.userData.kind = 'knife';
   g.userData.hazard = true;
   g.userData.h = 1.2;
@@ -65,8 +68,11 @@ export function makeKnife() {
     const cycle = (t + (g.userData.phase || 0)) % 2.6;
     const telegraph = cycle > 1.35 && cycle <= 1.9;
     const slam = cycle > 1.9 && cycle < 2.35;
-    warn.material.opacity = telegraph ? 0.45 + Math.sin(t * 30) * 0.2 : 0;
-    blade.position.y = slam ? 0.05 : 2.4;
+    const hot = telegraph || slam;
+    const pulse = hot ? 0.55 + Math.sin(t * 30) * 0.25 : 0;
+    warn.material.opacity = pulse;
+    flash.material.opacity = pulse * 0.85;
+    blade.position.y = slam ? 0.02 : 2.8;
     blade.rotation.z = slam ? 0 : 0.15;
     g.userData.hot = slam;
     g.userData.warn = telegraph;
@@ -78,4 +84,48 @@ export function tickHazards(root, time) {
   root.traverse((obj) => {
     if (obj.userData && obj.userData.tick) obj.userData.tick(time);
   });
+}
+
+function phaseFor(time, cycle, target) {
+  return (target - (time % cycle) + cycle) % cycle;
+}
+
+export function primeShotHazards(root, time, bird) {
+  const found = { oven: null, knife: null, ovenD: 1e9, knifeD: 1e9 };
+  const wp = new THREE.Vector3();
+  root.updateMatrixWorld(true);
+  root.traverse((obj) => {
+    const kind = obj.userData && obj.userData.kind;
+    if (kind !== 'oven' && kind !== 'knife') return;
+    obj.getWorldPosition(wp);
+    const ahead = bird.z - wp.z;
+    if (ahead < -2 || ahead > 18) return;
+    if (kind === 'oven' && ahead < found.ovenD) {
+      found.oven = obj;
+      found.ovenD = ahead;
+    }
+    if (kind === 'knife' && ahead < found.knifeD) {
+      found.knife = obj;
+      found.knifeD = ahead;
+    }
+  });
+  const parentOf = (obj) => obj.parent;
+  const drop = (obj, x, ahead) => {
+    if (!obj || !obj.parent) return;
+    const local = parentOf(obj).worldToLocal(new THREE.Vector3(x, 0, bird.z - ahead));
+    obj.position.set(local.x, 0, local.z);
+  };
+  if (!found.oven || !found.knife) {
+    root.traverse((obj) => {
+      const kind = obj.userData && obj.userData.kind;
+      if (!found.oven && kind === 'oven') found.oven = obj;
+      if (!found.knife && kind === 'knife') found.knife = obj;
+    });
+  }
+  drop(found.oven, -2.35, 7.4);
+  drop(found.knife, 2.35, 5.4);
+  if (found.oven) found.oven.scale.setScalar(1.45);
+  if (found.knife) found.knife.scale.setScalar(1.15);
+  if (found.oven) found.oven.userData.phase = phaseFor(time, 3.2, 2.55);
+  if (found.knife) found.knife.userData.phase = phaseFor(time, 2.6, 2.12);
 }

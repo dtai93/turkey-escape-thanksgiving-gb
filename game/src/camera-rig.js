@@ -9,16 +9,20 @@ export function createCameraRig(camera) {
   return {
     snap: true,
     update(bird, farmer, state, dt) {
-      const gap = farmer.z - bird.z;
-      const back = Math.max(6.5, Math.min(7.7, gap + 3.7));
-      desired.set(bird.x + 2.15, 3.05, bird.z + back);
-      look.set(bird.x - 0.15, 1.15 + bird.y * 0.25, bird.z - 5.2);
-      if (state.caughtPose) {
-        desired.set(bird.x + 1.6, 2.3, bird.z + 3.2);
-        look.set(bird.x, 0.9, bird.z);
+      desired.set(bird.x + 0.4, 3.2, bird.z + 7.35);
+      look.set(bird.x, 0.9, bird.z - 8.2);
+      if (state.shot === 'kitchen') {
+        desired.set(bird.x, 3.55, bird.z + 5.15);
+        look.set(bird.x, 0.65, bird.z - 9.5);
+      } else if (state.mode === 'title') {
+        desired.set(-1.1, 2.25, 4.9);
+        look.set(0.55, 0.85, -2.8);
+      } else if (state.caughtPose) {
+        desired.set(bird.x + 3.5, 2.25, bird.z + 4.5);
+        look.set(bird.x + 0.1, 1.0, bird.z + 0.2);
       } else if (state.escapedPose) {
-        desired.set(bird.x - 2.2, 2.6, bird.z + 4.5);
-        look.set(bird.x, 1.1, bird.z - 6);
+        desired.set(bird.x - 2.6, 2.15, bird.z + 4.8);
+        look.set(bird.x, 1.05, bird.z - 7);
       }
       if (this.snap) {
         camera.position.copy(desired);

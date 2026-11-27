@@ -1,7 +1,7 @@
 // Boot, fixed timestep, and the chase. Shot queries run a fixed burst, then freeze.
 
 import * as THREE from 'three';
-import { STEP, FARMER, TURKEY } from './config.js';
+import { STEP, FARMER, TURKEY, LANES } from './config.js';
 import { createInput } from './input.js';
 import { createState, MODE_TITLE, MODE_RUN, MODE_PAUSE, MODE_END, setBanner, resetRun, stageName } from './game-state.js';
 import { createTurkey } from './turkey-model.js';
@@ -10,7 +10,7 @@ import { createFarmer } from './farmer-model.js';
 import { createFarmerAi, resetFarmer, stepFarmer } from './farmer-ai.js';
 import { createLighting } from './lighting-and-sky.js';
 import { createTrack } from './track-builder.js';
-import { tickHazards } from './hazards.js';
+import { tickHazards, primeShotHazards } from './hazards.js';
 import { resolveContacts } from './collisions.js';
 import { stepHide } from './hiding-spots.js';
 import { addDistance, addKernel, addNearMiss, applyHit } from './scoring.js';
@@ -43,6 +43,14 @@ const turkey = createTurkey();
 const farmerMesh = createFarmer();
 scene.add(turkey);
 scene.add(farmerMesh);
+
+const laneWarn = new THREE.Mesh(
+  new THREE.PlaneGeometry(2.3, 11),
+  new THREE.MeshBasicMaterial({ color: 0xff2418, transparent: true, opacity: 0, depthWrite: false }),
+);
+laneWarn.rotation.x = -Math.PI / 2;
+laneWarn.position.y = 0.07;
+scene.add(laneWarn);
 
 const state = createState(query.seed);
 const bird = createTurkeyController();
@@ -92,17 +100,24 @@ function syncWorld(dt) {
   turkey.position.set(bird.x, bird.y, bird.z);
   turkey.userData.update(bird.phase, state.mode === MODE_TITLE ? 'idle' : bird.pose, bird.y);
   farmerMesh.position.set(farmer.x, 0, farmer.z);
-  farmerMesh.userData.update(farmer.phase, farmer.state);
+  const shout = state.shoutT > 0 ? state.shout : '';
+  farmerMesh.userData.update(farmer.phase, farmer.state, shout, state.farmerSweep || 0);
   if (state.caughtPose) {
-    farmerMesh.position.z = bird.z + 1.15;
-    farmerMesh.position.x = bird.x + 0.15;
+    farmerMesh.position.z = bird.z + 1.35;
+    farmerMesh.position.x = bird.x + 0.35;
+    farmer.state = 'LUNGE';
+    farmerMesh.userData.update(farmer.phase, 'LUNGE', 'Got you, dinner!', 0);
     turkey.userData.update(bird.phase, 'panic', bird.y);
+  }
+  if (state.cornerLane >= 0) {
+    laneWarn.material.opacity = 0.42 + Math.sin(state.time * 22) * 0.15;
+    laneWarn.position.x = LANES[state.cornerLane];
+    laneWarn.position.z = bird.z - 6.5;
+  } else {
+    laneWarn.material.opacity = 0;
   }
   lighting.follow(bird.x, bird.z);
   rig.update(bird, farmer, state, dt);
-  if (state.flash > 0) {
-    renderer.setClearColor(0xff6a4a, 1);
-  }
 }
 
 function simulate(dt) {
@@ -123,9 +138,20 @@ function simulate(dt) {
     stepTurkey(bird, input, dt, false);
     bird.z = 0;
     farmer.z = bird.z + state.farmerDist;
-    farmer.x += (bird.x + 1.4 - farmer.x) * Math.min(1, 3 * dt);
+    const titleSide = query.name === 'title' ? 0.85 : 1.5;
+    farmer.x += (bird.x + titleSide - farmer.x) * Math.min(1, 3 * dt);
     farmer.phase += dt * 6;
-    farmer.state = 'CHASE';
+    if (query.name === 'title') {
+      farmer.state = 'SEARCH';
+      state.farmerState = 'SEARCH';
+      state.farmerSweep += dt * 1.7;
+      state.shout = '?';
+      state.shoutT = 1;
+      farmer.searchSweep = state.farmerSweep;
+    } else {
+      farmer.state = 'CHASE';
+      state.farmerState = 'CHASE';
+    }
     if (input.pressed.jump || input.pressed.up) beginRun();
     track.recycle(0);
     tickHazards(track.root, state.time);
@@ -155,21 +181,28 @@ function simulate(dt) {
   if (info.index !== state.stageIndex) {
     state.stageIndex = info.index;
     state.stageName = stageName(info.index);
-    setBanner(state, state.stageName, 1.4);
+    setBanner(state, `STAGE ${info.index + 1}  ${state.stageName}`, 1.5);
     audio.shout();
   }
   state.stageProgress = Math.max(0, Math.min(1, info.into / info.stage.length));
   const difficulty = difficultyOf(info);
 
   stepTurkey(bird, input, dt, true);
+  state.stamina = bird.stamina;
+  state.decoyT = Math.max(0, state.decoyT - dt);
   if (input.pressed.decoy && state.decoys > 0 && !bird.hiding) {
     state.decoys -= 1;
-    state.farmerDist = Math.min(14, state.farmerDist + 2.8);
+    state.decoyT = 2.3;
+    state.decoyLane = bird.lane === 0 ? 1 : bird.lane - 1;
+    state.farmerDist = Math.min(14, state.farmerDist + 2.6);
     farmer.state = 'SEARCH';
     farmer.stateT = 0;
-    setBanner(state, 'HIDDEN', 0.8);
-    particles.puffFeathers(bird.x, 1.2, bird.z + 1.4);
-    audio.gobble();
+    farmer.lost = true;
+    setBanner(state, 'DECOY!', 0.85);
+    state.shout = '?';
+    state.shoutT = 1.1;
+    particles.puffFeathers(LANES[state.decoyLane], 1.15, bird.z - 1.6);
+    audio.decoy();
   }
 
   let forward = bird.dashing > 0 ? TURKEY.dashSpeed : info.stage.speed;
@@ -177,11 +210,22 @@ function simulate(dt) {
   tickHazards(track.root, state.time);
   const contacts = resolveContacts(track.interactive, bird, 0);
   const hide = stepHide(state, bird, contacts.hideSpot, dt);
+  if (hide === 'start') {
+    setBanner(state, 'HIDDEN', 1);
+    audio.rustle();
+  }
   if (hide === 'found') {
     setBanner(state, 'SPOTTED!', 0.9);
     audio.shout();
     state.farmerDist = Math.max(2.2, state.farmerDist - 1.2);
   }
+  state.muddy = Boolean(contacts.slow) && !bird.hiding;
+  if (contacts.alert && !bird.hiding && state.alertCd <= 0) {
+    state.alerted = true;
+    state.alertCd = 1.6;
+    audio.squawk();
+  }
+  state.alertCd = Math.max(0, (state.alertCd || 0) - dt);
   if (contacts.slow && !bird.hiding) forward *= 0.62;
   if (state.slow > 0) forward *= 0.78;
 
@@ -190,6 +234,12 @@ function simulate(dt) {
   addDistance(state, metres);
 
   stepFarmer(farmer, bird, state, dt, difficulty);
+  if (state.lungeMiss) {
+    state.lungeMiss = false;
+    addNearMiss(state);
+    audio.whoosh();
+    particles.puffFeathers(bird.x, 1.1 + bird.y, bird.z);
+  }
 
   if (contacts.pickup) {
     addKernel(state);
@@ -199,10 +249,6 @@ function simulate(dt) {
     addNearMiss(state);
     audio.whoosh();
     particles.puffFeathers(bird.x, 1.1 + bird.y, bird.z);
-  }
-  if (contacts.alert && !bird.hiding) {
-    state.farmerDist = Math.max(1.4, state.farmerDist - 0.7 * dt);
-    if (state.bannerT <= 0) setBanner(state, 'SPOTTED!', 0.6);
   }
   if (contacts.hit && state.invuln <= 0 && !bird.hiding) {
     applyHit(state);
@@ -224,14 +270,29 @@ function simulate(dt) {
   if (state.mode === MODE_RUN && state.distance >= totalLength()) finish('escaped');
 
   particles.ambient(bird, rng);
-  if (info.stage.id === 'kitchen' && rng() < 0.12) particles.puffFire(bird.x + 1.2, 0.5, bird.z - 5);
+  if (info.stage.id === 'kitchen' && rng() < 0.18) particles.puffFire(bird.x + (rng() - 0.5) * 3, 0.8, bird.z - 6);
   particles.tick(dt);
-  audio.tick(dt, true);
-  if (farmer.state === 'LUNGE' && state.bannerT <= 0) setBanner(state, 'FARMER CLOSING IN', 0.6);
+  let ovenHot = false;
+  let knifeHot = false;
+  track.root.traverse((obj) => {
+    const data = obj.userData;
+    if (!data) return;
+    if (data.kind === 'oven' && data.hot) ovenHot = true;
+    if (data.kind === 'knife' && data.hot) knifeHot = true;
+  });
+  if (ovenHot && !state.ovenHot) audio.oven();
+  if (knifeHot && !state.knifeHot) audio.knife();
+  state.ovenHot = ovenHot;
+  state.knifeHot = knifeHot;
+  audio.tick(dt, state.mode === MODE_RUN);
 }
 
 let shotLeft = query.name ? shotSteps(query.name) : 0;
-if (query.name) prepareShot(query.name, state, bird, farmer);
+if (query.name) {
+  state.shot = query.name;
+  prepareShot(query.name, state, bird, farmer);
+  turkey.userData.setHat(state.hat);
+}
 
 let acc = 0;
 let last = performance.now();
@@ -274,7 +335,53 @@ if (query.name) {
   if (query.name === 'cover') {
     state.banner = 'NEAR MISS!';
     state.bannerT = 2;
-    if (farmer.state !== 'LUNGE') farmer.state = 'LUNGE';
+    state.shout = 'Come back here, dinner!';
+    state.shoutT = 2;
+    farmer.state = 'LUNGE';
+    state.farmerState = 'LUNGE';
+    state.farmerDist = 1.85;
+    farmer.z = bird.z + 1.85;
+    farmer.x = bird.x - 1.45;
+    bird.y = Math.min(bird.y, 0.7);
+    if (bird.y > 0.15) {
+      bird.grounded = false;
+      bird.pose = 'jump';
+    }
+  }
+  if (query.name === 'kitchen') {
+    primeShotHazards(track.root, state.time, bird);
+    tickHazards(track.root, state.time);
+    state.stageIndex = 2;
+    state.stageName = 'KITCHEN';
+    state.banner = 'NEAR MISS!';
+    state.bannerT = 2;
+    state.shout = 'Come back here, dinner!';
+    state.shoutT = 2;
+    farmer.state = 'CHASE';
+    state.farmerState = 'CHASE';
+    state.farmerDist = 2.05;
+    farmer.z = bird.z + 2.05;
+    farmer.x = bird.x + 1.15;
+    bird.sliding = 0.4;
+    bird.grounded = true;
+    bird.y = 0;
+    bird.pose = 'slide';
+    particles.puffFire(-2.2, 1.3, bird.z - 8.4);
+    particles.puffFire(-1.6, 0.8, bird.z - 7.6);
+    particles.tick(0.016);
+  }
+  if (query.name === 'end') {
+    state.lives = 0;
+    state.shout = 'Got you, dinner!';
+    state.shoutT = 2;
+    state.farmerState = 'LUNGE';
+  }
+  if (query.name === 'title') {
+    state.mode = 'title';
+    farmer.state = 'SEARCH';
+    state.farmerState = 'SEARCH';
+    state.shout = '?';
+    state.shoutT = 2;
   }
   syncWorld(STEP);
   renderer.render(scene, camera);

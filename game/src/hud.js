@@ -49,7 +49,7 @@ export function createHud(canvas) {
     const w = window.innerWidth;
     const h = window.innerHeight;
     ctx.clearRect(0, 0, w, h);
-    if (state.mode === 'title') return;
+    if (state.mode === 'title' || state.mode === 'end') return;
 
     panel(16, 16, 250, 92);
     ctx.fillStyle = '#ffd7a0';
@@ -72,7 +72,7 @@ export function createHud(canvas) {
     ctx.fillStyle = '#fff6e4';
     ctx.font = '900 26px Arial Black, Arial, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`STAGE  ${state.stageName}`, w / 2, 48);
+    ctx.fillText(`STAGE ${state.stageIndex + 1}  ${state.stageName}`, w / 2, 48);
     ctx.textAlign = 'left';
     const barX = (w - stageW) / 2 + 18;
     const barW = stageW - 36;
@@ -101,14 +101,59 @@ export function createHud(canvas) {
     ctx.fillStyle = danger ? '#ff3a2a' : '#f0a030';
     ctx.fillRect(w - 260, 98, 220 * gauge, 14);
 
+    panel(w - 280, 148, 264, 78);
+    ctx.fillStyle = '#ffd7a0';
+    ctx.font = '700 16px Arial, sans-serif';
+    ctx.fillText('STAMINA', w - 260, 172);
+    ctx.fillText(`DECOY ${state.decoys}`, w - 120, 172);
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(w - 260, 184, 220, 14);
+    ctx.fillStyle = state.stamina < 0.42 ? '#ff5a3a' : '#7dcf6a';
+    ctx.fillRect(w - 260, 184, 220 * Math.max(0, Math.min(1, state.stamina)), 14);
+    ctx.fillStyle = '#fff6e4';
+    ctx.font = '900 18px Arial Black, Arial, sans-serif';
+    ctx.fillText(`HANK: ${state.farmerState}`, w - 260, 216);
+
+    if (state.hidden || state.hideMeter > 0.02) {
+      panel(16, 196, 250, 58);
+      ctx.fillStyle = '#9ad0ff';
+      ctx.font = '700 16px Arial, sans-serif';
+      ctx.fillText('OUT OF SIGHT', 32, 218);
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.fillRect(32, 228, 210, 14);
+      ctx.fillStyle = state.hideMeter > 0.75 ? '#ff5a3a' : '#7ec8ff';
+      ctx.fillRect(32, 228, 210 * Math.max(0, Math.min(1, state.hideMeter)), 14);
+    }
+
+    if (state.flash > 0) {
+      ctx.fillStyle = `rgba(255, 70, 40, ${Math.min(0.45, state.flash)})`;
+      ctx.fillRect(0, 0, w, h);
+    }
+
     if (state.bannerT > 0 && state.banner) {
       ctx.textAlign = 'center';
       ctx.font = '900 54px Arial Black, Arial, sans-serif';
       ctx.lineWidth = 8;
       ctx.strokeStyle = '#2a120c';
-      ctx.fillStyle = state.banner === 'OUCH!' ? '#ff5a3a' : state.banner === 'HIDDEN' ? '#9ad0ff' : '#ffe08a';
+      const bannerColor = state.banner === 'OUCH!' || state.banner === 'SPOTTED!' || state.banner === 'CORNERED!'
+        ? '#ff5a3a'
+        : state.banner === 'HIDDEN'
+          ? '#9ad0ff'
+          : '#ffe08a';
+      ctx.fillStyle = bannerColor;
       ctx.strokeText(state.banner, w / 2, h * 0.28);
       ctx.fillText(state.banner, w / 2, h * 0.28);
+      ctx.textAlign = 'left';
+    }
+
+    if (state.shoutT > 0 && state.shout) {
+      ctx.textAlign = 'center';
+      ctx.font = '900 32px Arial Black, Arial, sans-serif';
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#2a120c';
+      ctx.fillStyle = '#fff6e4';
+      ctx.strokeText(state.shout, w / 2, h * 0.36);
+      ctx.fillText(state.shout, w / 2, h * 0.36);
       ctx.textAlign = 'left';
     }
 

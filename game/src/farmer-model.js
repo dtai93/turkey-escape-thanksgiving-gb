@@ -99,31 +99,88 @@ export function createFarmer() {
   shadow.position.y = 0.03;
   group.add(shadow);
 
-  function update(phase, stateName) {
+  const cone = new THREE.Mesh(
+    new THREE.ConeGeometry(1.15, 4.4, 14, 1, true),
+    new THREE.MeshBasicMaterial({
+      color: 0xffcc66,
+      transparent: true,
+      opacity: 0.22,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+    }),
+  );
+  cone.rotation.x = Math.PI / 2;
+  cone.position.set(0, 1.35, -1.5);
+  cone.visible = false;
+  group.add(cone);
+
+  const bubbleCanvas = document.createElement('canvas');
+  bubbleCanvas.width = 512;
+  bubbleCanvas.height = 128;
+  const bubbleCtx = bubbleCanvas.getContext('2d');
+  const bubbleTex = new THREE.CanvasTexture(bubbleCanvas);
+  bubbleTex.colorSpace = THREE.SRGBColorSpace;
+  const bubble = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubbleTex, transparent: true, depthTest: false }));
+  bubble.position.set(0.2, 3.25, 0);
+  bubble.scale.set(2.8, 0.7, 1);
+  bubble.visible = false;
+  group.add(bubble);
+
+  function paintBubble(text) {
+    bubbleCtx.clearRect(0, 0, 512, 128);
+    bubbleCtx.fillStyle = 'rgba(255, 246, 228, 0.95)';
+    bubbleCtx.beginPath();
+    bubbleCtx.rect(8, 8, 496, 112);
+    bubbleCtx.fill();
+    bubbleCtx.lineWidth = 8;
+    bubbleCtx.strokeStyle = '#6a2a14';
+    bubbleCtx.stroke();
+    bubbleCtx.fillStyle = '#2a120c';
+    bubbleCtx.font = text.length < 3 ? '900 78px Arial' : '700 36px Arial';
+    bubbleCtx.textAlign = 'center';
+    bubbleCtx.textBaseline = 'middle';
+    bubbleCtx.fillText(text, 256, 66);
+    bubbleTex.needsUpdate = true;
+  }
+
+  function update(phase, stateName, shout, sweep) {
     const swing = Math.sin(phase);
     legL.hip.rotation.x = swing * 0.7;
     legR.hip.rotation.x = -swing * 0.7;
     legL.shin.rotation.x = Math.max(0, -swing) * 0.6;
     legR.shin.rotation.x = Math.max(0, swing) * 0.6;
     armL.shoulder.rotation.x = -swing * 0.6;
+    armL.shoulder.rotation.z = 0;
     armR.shoulder.rotation.x = swing * 0.6;
     rig.position.y = Math.abs(swing) * 0.04;
-    rig.rotation.x = 0.08;
+    rig.rotation.set(0.08, 0, 0);
     net.rotation.x = -0.4;
+    cone.visible = stateName === 'SEARCH';
     if (stateName === 'LUNGE') {
-      armR.shoulder.rotation.x = -1.6;
-      net.rotation.x = -0.2;
-      rig.rotation.x = 0.35;
+      armR.shoulder.rotation.x = -1.7;
+      net.rotation.x = 0.35;
+      rig.rotation.x = 0.42;
     } else if (stateName === 'SEARCH') {
-      armL.shoulder.rotation.z = Math.sin(phase * 0.7) * 0.5;
-      armL.shoulder.rotation.x = -0.4;
-      rig.rotation.y = Math.sin(phase * 0.5) * 0.3;
+      const sweepAngle = Math.sin(sweep || phase) * 0.7;
+      armL.shoulder.rotation.z = sweepAngle;
+      armL.shoulder.rotation.x = -0.55;
+      rig.rotation.y = sweepAngle * 0.45;
+      cone.rotation.z = sweepAngle;
     } else if (stateName === 'CORNER') {
-      rig.rotation.z = -0.12;
-      armR.shoulder.rotation.x = -0.9;
+      rig.rotation.z = -0.18;
+      rig.rotation.y = 0.35;
+      armR.shoulder.rotation.x = -1.05;
+    }
+    const shortCue = shout === '?' || shout === '!';
+    if (shortCue) {
+      if (bubble.userData.last !== shout) {
+        paintBubble(shout);
+        bubble.userData.last = shout;
+      }
+      bubble.visible = true;
+      bubble.scale.set(0.85, 0.85, 1);
     } else {
-      rig.rotation.y = 0;
-      rig.rotation.z = 0;
+      bubble.visible = false;
     }
   }
 

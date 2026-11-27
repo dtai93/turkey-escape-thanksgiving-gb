@@ -85,6 +85,11 @@ export function makeRollingPin() {
   g.userData.solid = true;
   g.userData.jumpOver = true;
   g.userData.h = 0.35;
+  g.userData.tick = (t) => {
+    if (g.userData.originX == null) g.userData.originX = g.position.x;
+    g.position.x = g.userData.originX + Math.sin(t * 1.6) * 1.1;
+    pin.rotation.x = t * 3;
+  };
   return g;
 }
 

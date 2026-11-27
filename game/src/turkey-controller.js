@@ -17,6 +17,7 @@ export function createTurkeyController() {
     grounded: true,
     wantHide: false,
     hiding: false,
+    stamina: 1,
     speed: TURKEY.runSpeed,
   };
 }
@@ -35,6 +36,7 @@ export function resetTurkey(bird) {
   bird.grounded = true;
   bird.wantHide = false;
   bird.hiding = false;
+  bird.stamina = 1;
   bird.speed = TURKEY.runSpeed;
 }
 
@@ -52,11 +54,14 @@ export function stepTurkey(bird, input, dt, running) {
   const target = LANES[bird.lane];
   bird.x += (target - bird.x) * Math.min(1, TURKEY.sideLerp * dt);
 
-  if (input.pressed.dash && bird.dashCd <= 0 && bird.dashing <= 0 && !bird.hiding) {
+  const dashCost = 0.42;
+  if (input.pressed.dash && bird.dashCd <= 0 && bird.dashing <= 0 && bird.stamina >= dashCost && !bird.hiding) {
     bird.dashing = TURKEY.dashTime;
     bird.dashCd = TURKEY.dashCooldown;
+    bird.stamina -= dashCost;
   }
   bird.dashing = Math.max(0, bird.dashing - dt);
+  if (bird.dashing <= 0) bird.stamina = Math.min(1, bird.stamina + dt * 0.28);
   bird.speed = bird.dashing > 0 ? TURKEY.dashSpeed : TURKEY.runSpeed;
 
   const jumpPressed = input.pressed.jump || input.pressed.up;

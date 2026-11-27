@@ -25,9 +25,10 @@ export function resolveContacts(items, bird, height) {
   for (let i = 0; i < items.length; i += 1) {
     const item = items[i];
     const u = item.userData;
-    if (u.hide && overlap(item, bird, 1.25, 1.25)) {
+    if (u.hide && overlap(item, bird, 1.35, 1.35)) {
       item.getWorldPosition(wp);
       result.hideSpot = { x: wp.x, z: wp.z };
+      if (bird.wantHide || bird.hiding) continue;
     }
     if (u.pickup && !u.used && overlap(item, bird, 0.7, 0.75) && bird.y < 1.4) {
       u.used = true;

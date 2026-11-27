@@ -1,7 +1,7 @@
-// Hay, corn and cabinets the turkey can duck into. Hank loses the trail while the meter lasts.
+// Hay, corn, barrels and cabinets. Hold E or H to crouch inside. Stay too long and Hank finds you.
 
-const HIDE_RANGE = 1.35;
-const MAX_HIDE = 1.7;
+const HIDE_RANGE = 1.45;
+const FILL_TIME = 2.15;
 
 export function findHideSpot(spots, bird) {
   let best = null;
@@ -20,25 +20,27 @@ export function findHideSpot(spots, bird) {
 }
 
 export function stepHide(state, bird, spot, dt) {
-  const can = Boolean(spot) && bird.wantHide && bird.grounded && bird.sliding <= 0;
+  const can = Boolean(spot) && bird.wantHide && bird.grounded && bird.sliding <= 0 && bird.dashing <= 0;
   if (can) {
+    const starting = !bird.hiding;
     bird.hiding = true;
     state.hidden = true;
-    state.hideMeter = Math.min(MAX_HIDE, state.hideMeter + dt);
-    bird.x += (spot.x - bird.x) * Math.min(1, 8 * dt);
-    if (state.hideMeter >= MAX_HIDE) {
+    state.hideMeter = Math.min(1, state.hideMeter + dt / FILL_TIME);
+    bird.x += (spot.x - bird.x) * Math.min(1, 9 * dt);
+    bird.pose = 'hide';
+    if (state.hideMeter >= 1) {
       bird.hiding = false;
       state.hidden = false;
       state.spotted = true;
       state.hideMeter = 0;
       return 'found';
     }
-    return 'hidden';
+    return starting ? 'start' : 'hidden';
   }
   if (bird.hiding) {
     bird.hiding = false;
     state.hidden = false;
   }
-  state.hideMeter = Math.max(0, state.hideMeter - dt * 1.5);
+  if (!bird.wantHide) state.hideMeter = Math.max(0, state.hideMeter - dt * 0.8);
   return '';
 }

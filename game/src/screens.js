@@ -7,20 +7,21 @@ export function createScreens(onRestart) {
   document.body.appendChild(root);
 
   const title = document.createElement('div');
-  title.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;';
+  title.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:18px;text-align:center;pointer-events:none;';
   title.innerHTML = [
     '<div style="background:rgba(32,14,8,0.72);border:4px solid #ffd7a0;border-radius:18px;padding:22px 36px 18px;color:#fff6e4;max-width:920px">',
     '<div style="letter-spacing:6px;font-weight:800;font-size:22px;color:#ffb15e">CRANBERRY HOLLOW</div>',
     '<div style="font-weight:900;font-size:54px;line-height:1.05;margin:6px 0 8px;text-shadow:0 4px 0 #5a2010">The Great Drumstick Dash</div>',
     '<div style="font-weight:800;font-size:28px;color:#ffe08a">PRESS SPACE TO RUN</div>',
     '<div id="best-line" style="margin-top:8px;font-size:18px;font-weight:700"></div>',
+    '<div id="hat-line" style="margin-top:4px;font-size:16px;font-weight:800;color:#ffb15e"></div>',
     '<div style="margin-top:10px;font-size:15px;color:#ffd7a0">A D lanes · SPACE jump · S slide · SHIFT dash · E hide · Q decoy · P pause</div>',
     '</div>',
   ].join('');
   root.appendChild(title);
 
   const end = document.createElement('div');
-  end.style.cssText = 'position:absolute;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;';
+  end.style.cssText = 'position:absolute;inset:0;display:none;align-items:flex-end;justify-content:center;padding-bottom:18px;pointer-events:none;';
   end.innerHTML = [
     '<div style="background:rgba(28,12,8,0.82);border:4px solid #ffd7a0;border-radius:18px;padding:22px 34px;color:#fff6e4;text-align:center;min-width:460px;pointer-events:auto">',
     '<div id="end-title" style="font-weight:900;font-size:64px;text-shadow:0 4px 0 #5a2010">CAUGHT!</div>',
@@ -39,7 +40,9 @@ export function createScreens(onRestart) {
     title.style.display = onTitle ? 'flex' : 'none';
     end.style.display = onEnd ? 'flex' : 'none';
     if (onTitle) {
+      const hats = (state.hats || []).filter((name) => name && name !== 'none');
       title.querySelector('#best-line').textContent = `BEST ${Math.floor(state.bestScore)}   ·   BEST STAGE ${state.bestStage || 0}`;
+      title.querySelector('#hat-line').textContent = hats.length ? `HATS  ${hats.join(' · ').toUpperCase()}` : 'HATS  NONE YET — ESCAPE TO UNLOCK';
     }
     if (onEnd) {
       const won = state.result === 'escaped';
@@ -48,12 +51,14 @@ export function createScreens(onRestart) {
       end.querySelector('#end-sub').textContent = won
         ? 'Tom Wattles made the woods.'
         : 'Farmer Hank got his dinner.';
+      const hats = (state.hats || []).filter((name) => name && name !== 'none');
       end.querySelector('#end-stats').innerHTML = [
         `SCORE ${Math.floor(state.score)}`,
         `DIST ${Math.floor(state.distance)} m`,
-        `STAGE ${state.stageName}`,
+        `STAGE ${state.stageIndex + 1}  ${state.stageName}`,
         `NEAR MISSES ${state.nearMisses}`,
         `BEST ${Math.floor(state.bestScore)}`,
+        `HATS ${hats.length ? hats.join(' · ').toUpperCase() : 'NONE YET'}`,
       ].join('<br>');
     }
   }

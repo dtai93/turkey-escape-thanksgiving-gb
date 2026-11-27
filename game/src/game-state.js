@@ -41,6 +41,16 @@ export function createState(seed) {
     hidden: false,
     hideMeter: 0,
     decoys: 2,
+    decoyT: 0,
+    decoyLane: 1,
+    stamina: 1,
+    shout: '',
+    shoutT: 0,
+    cornerLane: -1,
+    muddy: false,
+    alerted: false,
+    lungeMiss: false,
+    farmerSweep: 0,
     shake: 0,
     flash: 0,
     slow: 1,
@@ -82,6 +92,16 @@ export function resetRun(state) {
   state.hidden = false;
   state.hideMeter = 0;
   state.decoys = 2;
+  state.decoyT = 0;
+  state.decoyLane = 1;
+  state.stamina = 1;
+  state.shout = '';
+  state.shoutT = 0;
+  state.cornerLane = -1;
+  state.muddy = false;
+  state.alerted = false;
+  state.lungeMiss = false;
+  state.farmerSweep = 0;
   state.shake = 0;
   state.flash = 0;
   state.slow = 1;

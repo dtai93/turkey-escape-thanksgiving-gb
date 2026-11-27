@@ -16,3 +16,7 @@ A third-person chase runs in the browser. Tom Wattles is a low-poly turkey with 
 ## Ideas
 
 Frame the kitchen shot so the oven door and the knife warning stripe are both obvious, with the turkey sliding under the blade. Give Hank a shout bubble ("Come back here, dinner!"). Add a side-step that is smoother than a lane snap so near-misses feel chosen.
+
+## Phase 2
+
+Hank now runs a real state machine: CHASE closes when Tom slows or is hit, SEARCH sweeps a lantern cone with a "?" while the out-of-sight meter fills (stay too long and he finds you), CORNER cuts across a lane with a red stripe and "!", LUNGE swings the net and a dodge is a near miss. Chickens squawk a SPOTTED. Hay, corn, barrels and cabinets hide; Q drops a decoy; Shift spends a stamina bar. Kitchen shows the oven burst and the carving knife slam. Banners, shake, feather puffs, hit flash and a short slow-mo are in, plus the fiddle loop and mute. Best score, best stage and hats show on the title and the caught card. All four shots are real frozen frames: cover chase, kitchen near-miss, title over the yard, caught end card.

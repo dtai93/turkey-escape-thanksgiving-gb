@@ -35,7 +35,15 @@ export function makeBarrel() {
   g.userData.kind = 'barrel';
   g.userData.solid = true;
   g.userData.jumpOver = true;
+  g.userData.hide = true;
   g.userData.h = 0.85;
+  g.userData.tick = (t) => {
+    const last = g.userData.lastT == null ? t : g.userData.lastT;
+    const dt = Math.min(0.05, Math.max(0, t - last));
+    g.userData.lastT = t;
+    g.position.z += 1.6 * dt;
+    body.rotation.x += dt * 5;
+  };
   return g;
 }
 
@@ -58,6 +66,9 @@ export function makeHangingLantern() {
   const glow = mesh(new THREE.BoxGeometry(0.12, 0.14, 0.12), PALETTE.lantern, 0, 1.85, 0, g);
   glow.material = new THREE.MeshBasicMaterial({ color: PALETTE.lantern });
   g.userData.kind = 'lantern';
+  g.userData.tick = (t) => {
+    g.rotation.z = Math.sin(t * 2.1) * 0.28;
+  };
   return g;
 }
 
