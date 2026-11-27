@@ -23,7 +23,7 @@ export function createScreens(onRestart) {
   const end = document.createElement('div');
   end.style.cssText = 'position:absolute;inset:0;display:none;align-items:center;justify-content:flex-end;padding-right:28px;pointer-events:none;';
   end.innerHTML = [
-    '<div style="background:rgba(28,12,8,0.78);border:4px solid #ffd7a0;border-radius:18px;padding:18px 28px;color:#fff6e4;text-align:center;width:420px;pointer-events:auto">',
+    '<div style="background:rgba(28,12,8,0.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:4px solid #ffd7a0;border-radius:18px;padding:18px 26px;color:#fff6e4;text-align:center;width:390px;pointer-events:auto">',
     '<div id="end-title" style="font-weight:900;font-size:58px;text-shadow:0 4px 0 #5a2010">CAUGHT!</div>',
     '<div id="end-sub" style="font-weight:700;font-size:18px;color:#ffd7a0;margin-bottom:8px"></div>',
     '<div id="end-stats" style="font-size:22px;line-height:1.4;font-weight:800"></div>',

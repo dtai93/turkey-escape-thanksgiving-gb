@@ -160,11 +160,11 @@ export function createFarmer() {
     rig.rotation.set(0.08, 0, 0);
     net.rotation.x = -0.4;
     cone.visible = stateName === 'SEARCH';
-    if (stateName === 'LUNGE') {
-      armR.shoulder.rotation.x = -2.15;
-      armR.shoulder.rotation.z = -0.9;
-      net.rotation.x = 0.15;
-      rig.rotation.x = 0.22;
+    if (stateName === 'LUNGE' || stateName === 'CAUGHT') {
+      armR.shoulder.rotation.x = stateName === 'CAUGHT' ? -1.15 : -2.15;
+      armR.shoulder.rotation.z = stateName === 'CAUGHT' ? -0.25 : -0.9;
+      net.rotation.x = stateName === 'CAUGHT' ? -0.55 : 0.15;
+      rig.rotation.x = stateName === 'CAUGHT' ? 0.12 : 0.22;
     } else if (stateName === 'SEARCH') {
       const sweepAngle = Math.sin(sweep || phase) * 0.7;
       armL.shoulder.rotation.z = sweepAngle;

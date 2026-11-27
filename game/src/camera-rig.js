@@ -27,8 +27,9 @@ export function createCameraRig(camera) {
         desired.set(bird.x - 2.55, 1.62, bird.z - 3.7);
         look.set(bird.x + 1.15, 1.05, bird.z + 0.45);
       } else if (state.caughtPose) {
-        desired.set(bird.x - 3.6, 2.35, bird.z + 5.4);
-        look.set(bird.x + 1.4, 1.05, bird.z - 1.2);
+        // Behind and a little left. Look toward +X so Tom and Hank stay left of the card.
+        desired.set(bird.x - 2.5, 2.25, bird.z + 5.7);
+        look.set(bird.x + 1.15, 0.9, bird.z - 0.8);
       } else if (state.escapedPose) {
         desired.set(bird.x - 3.2, 2.6, bird.z + 6.2);
         look.set(bird.x, 1.15, bird.z - 8);

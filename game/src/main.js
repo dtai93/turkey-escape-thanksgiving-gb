@@ -105,11 +105,13 @@ function syncWorld(dt) {
   const shout = state.shoutT > 0 ? state.shout : '';
   farmerMesh.userData.update(farmer.phase, farmer.state, shout, state.farmerSweep || 0);
   if (state.caughtPose) {
-    farmerMesh.position.z = bird.z + 0.85;
-    farmerMesh.position.x = bird.x + 0.55;
+    // Hank stands just behind Tom, turned down the lane, net swung over the body.
+    farmerMesh.position.set(bird.x - 1.95, 0, bird.z + 1.55);
+    farmerMesh.rotation.y = 2.15;
     farmer.state = 'LUNGE';
-    farmerMesh.userData.update(farmer.phase, 'LUNGE', 'Got you, dinner!', 0);
-    turkey.userData.update(bird.phase, 'panic', bird.y);
+    farmerMesh.userData.update(0.2, 'CAUGHT', '', 0);
+    turkey.position.y = 0.12;
+    turkey.userData.update(1.2, 'panic', 0.12);
   }
   if (state.cornerLane >= 0) {
     laneWarn.material.opacity = 0.42 + Math.sin(state.time * 22) * 0.15;
@@ -406,9 +408,12 @@ if (query.name) {
   }
   if (query.name === 'end') {
     state.lives = 0;
-    state.shout = 'Got you, dinner!';
-    state.shoutT = 2;
+    state.shout = '';
+    state.shoutT = 0;
     state.farmerState = 'LUNGE';
+    bird.pose = 'panic';
+    bird.phase = 1.2;
+    bird.y = 0.12;
   }
   if (query.name === 'title') {
     state.mode = 'title';
@@ -429,6 +434,7 @@ if (query.name) {
     shovePropsClear(farmerMesh, track.root);
     shovePropsClear(turkey, track.root);
   }
+
   renderer.render(scene, camera);
   hud.draw(state);
   screens.show(state);

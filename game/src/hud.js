@@ -218,8 +218,8 @@ export function createHud(canvas) {
         ctx.font = '900 48px Arial Black, Arial, sans-serif';
         ctx.lineWidth = 8;
         ctx.fillStyle = '#ffd24a';
-        ctx.strokeText(state.bonus, w / 2, h * 0.2 + 58);
-        ctx.fillText(state.bonus, w / 2, h * 0.2 + 58);
+        ctx.strokeText(state.bonus, w * 0.78, h * 0.16);
+        ctx.fillText(state.bonus, w * 0.78, h * 0.16);
       }
       ctx.textAlign = 'left';
     }
